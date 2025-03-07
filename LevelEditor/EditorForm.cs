@@ -69,7 +69,7 @@
         /// </summary>
         public void InitNewMap(int width, int height)
         {
-            if(tileMapData != null)
+            if (tileMapData != null)
             {
                 Cleanup();
             }
@@ -113,6 +113,7 @@
             }
 
             UpdateTitle();
+            UpdateButtons();
         }
 
         private void LoadButtonPressed(object sender, EventArgs e)
@@ -144,14 +145,13 @@
                 width = reader.ReadByte();
                 height = reader.ReadByte();
                 data = reader.ReadBytes(width * height);
-                //check safety byte
-                if(reader.ReadByte() != 100)
+                if (data.Length < width * height)
                 {
                     MessageBox.Show("Unable to load due to corrupted data.", "Corrupted File", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Unable to load due to the following error: " + ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -163,14 +163,15 @@
             }
             InitNewMap(width, height);
             currentFile = filePath;
-            for(int x = 0; x < width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for(int y = 0; y < height; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    PaintTile(x, y, data[x*height + y], false);
+                    PaintTile(x, y, data[x * height + y], false);
                 }
             }
             UpdateTitle();
+            UpdateButtons();
 
             MessageBox.Show("Successfully Loaded");
             return true;
@@ -178,7 +179,7 @@
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            if(!CheckSaveOnExit())
+            if (!CheckSaveOnExit())
             {
                 e.Cancel = true;
                 return;
@@ -218,11 +219,6 @@
                 default:
                     return false;
             }
-        }
-
-        private void SaveButtonPressed(object sender, EventArgs e)
-        {
-            Save();
         }
 
         /// <summary>
@@ -271,17 +267,15 @@
                 //write dimensions
                 writer.Write((byte)tileMapData.GetLength(0));
                 writer.Write((byte)tileMapData.GetLength(1));
-                for(int x = 0; x < tileMapData.GetLength(0); x++)
+                for (int x = 0; x < tileMapData.GetLength(0); x++)
                 {
                     for (int y = 0; y < tileMapData.GetLength(1); y++)
                     {
                         writer.Write((byte)tileMapData[x, y]);
                     }
                 }
-                //extra safety byte to easily check if data ends early when loading
-                writer.Write((byte)100);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Unable to save due to the following error: " + ex.Message, "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -362,6 +356,7 @@
                 {
                     currentAction = new ActionData(colorIndex);
                     UpdateTitle();
+                    UpdateButtons();
                 }
                 currentAction.Value.paintedCoords.Add((x, y, prevColorIndex));
             }
@@ -379,15 +374,22 @@
             //so this function is included in way more places than it really should be
             if (currentAction == null)
                 return;
+
+            System.Diagnostics.Debug.WriteLine($"\nRecording draw action with color {currentAction.Value.newColorIndex}.");
+
             //Delete undo history past this point
             while (undoPos != undoQueue.Last)
+            {
+                System.Diagnostics.Debug.WriteLine($"Deleting overwritten action.");
                 undoQueue.RemoveLast();
+            }
 
             undoQueue.AddLast(currentAction.Value);
             undoPos = undoQueue.Last;
             currentAction = null;
 
             UpdateTitle();
+            UpdateButtons();
         }
 
         public void Undo()
@@ -403,6 +405,12 @@
             undoPos = undoPos.Previous;
 
             UpdateTitle();
+            UpdateButtons();
+        }
+
+        public bool CanUndo()
+        {
+            return undoPos != null;
         }
 
         public void Redo()
@@ -430,6 +438,22 @@
             }
 
             UpdateTitle();
+            UpdateButtons();
+        }
+
+        public bool CanRedo()
+        {
+            //if there's no actions performed at all...
+            if (undoQueue.First == null)
+                return false;
+            //if there's been any actions, and all of them have been undone...
+            else if (undoPos == null)
+                return true;
+            //if we're at the end of the undo queue...
+            else if (undoPos.Next == null)
+                return false;
+            else
+                return true;
         }
 
         private void UpdateTitle()
@@ -444,6 +468,33 @@
                 titleText += "*";
             }
             this.Text = titleText;
+        }
+
+        private void UpdateButtons()
+        {
+            saveFileButton.Enabled = !IsSaved || currentFile == null;
+            undoButton.Enabled = CanUndo();
+            redoButton.Enabled = CanRedo();
+        }
+
+        private void SaveButtonPressed(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void SaveAsButtonPressed(object sender, EventArgs e)
+        {
+            SaveAs();
+        }
+
+        private void UndoButtonPressed(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void RedoButtonPressed(object sender, EventArgs e)
+        {
+            Redo();
         }
     }
 }

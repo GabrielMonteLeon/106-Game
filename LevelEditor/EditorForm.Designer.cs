@@ -37,12 +37,21 @@
             pColor1 = new Button();
             groupBox1 = new GroupBox();
             currentTileDisplay = new PictureBox();
-            button1 = new Button();
-            button2 = new Button();
             mapBox = new GroupBox();
+            menuStrip1 = new MenuStrip();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            newLevelButton = new ToolStripMenuItem();
+            saveFileButton = new ToolStripMenuItem();
+            saveAsButton = new ToolStripMenuItem();
+            loadFileButton = new ToolStripMenuItem();
+            editToolStripMenuItem = new ToolStripMenuItem();
+            undoButton = new ToolStripMenuItem();
+            redoButton = new ToolStripMenuItem();
             palletteGroup.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)currentTileDisplay).BeginInit();
+            mapBox.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // palletteGroup
@@ -53,7 +62,7 @@
             palletteGroup.Controls.Add(pColor3);
             palletteGroup.Controls.Add(pColor2);
             palletteGroup.Controls.Add(pColor1);
-            palletteGroup.Location = new Point(19, 15);
+            palletteGroup.Location = new Point(21, 32);
             palletteGroup.Name = "palletteGroup";
             palletteGroup.Size = new Size(95, 161);
             palletteGroup.TabIndex = 0;
@@ -123,7 +132,7 @@
             // groupBox1
             // 
             groupBox1.Controls.Add(currentTileDisplay);
-            groupBox1.Location = new Point(19, 182);
+            groupBox1.Location = new Point(21, 199);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(95, 101);
             groupBox1.TabIndex = 1;
@@ -139,46 +148,96 @@
             currentTileDisplay.TabIndex = 0;
             currentTileDisplay.TabStop = false;
             // 
-            // button1
-            // 
-            button1.Location = new Point(22, 289);
-            button1.Name = "button1";
-            button1.Size = new Size(92, 56);
-            button1.TabIndex = 2;
-            button1.Text = "Save File";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += SaveButtonPressed;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(22, 359);
-            button2.Name = "button2";
-            button2.Size = new Size(92, 56);
-            button2.TabIndex = 3;
-            button2.Text = "Load File";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += LoadButtonPressed;
-            // 
             // mapBox
             // 
-            mapBox.Location = new Point(134, 15);
+            mapBox.Controls.Add(scrollBarHorizontal);
+            mapBox.Controls.Add(scrollBarVertical);
+            mapBox.Location = new Point(131, 32);
             mapBox.Name = "mapBox";
             mapBox.Size = new Size(400, 400);
             mapBox.TabIndex = 4;
             mapBox.TabStop = false;
             mapBox.Text = "Map";
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(543, 24);
+            menuStrip1.TabIndex = 5;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newLevelButton, saveFileButton, saveAsButton, loadFileButton });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "File";
+            // 
+            // newLevelButton
+            // 
+            newLevelButton.Name = "newLevelButton";
+            newLevelButton.Size = new Size(195, 22);
+            newLevelButton.Text = "New";
+            // 
+            // saveFileButton
+            // 
+            saveFileButton.Name = "saveFileButton";
+            saveFileButton.ShortcutKeys = Keys.Control | Keys.S;
+            saveFileButton.Size = new Size(195, 22);
+            saveFileButton.Text = "Save";
+            saveFileButton.Click += SaveButtonPressed;
+            // 
+            // saveAsButton
+            // 
+            saveAsButton.Name = "saveAsButton";
+            saveAsButton.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S;
+            saveAsButton.Size = new Size(195, 22);
+            saveAsButton.Text = "Save As...";
+            saveAsButton.Click += SaveAsButtonPressed;
+            // 
+            // loadFileButton
+            // 
+            loadFileButton.Name = "loadFileButton";
+            loadFileButton.Size = new Size(195, 22);
+            loadFileButton.Text = "Load...";
+            loadFileButton.Click += LoadButtonPressed;
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoButton, redoButton });
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new Size(39, 20);
+            editToolStripMenuItem.Text = "Edit";
+            // 
+            // undoButton
+            // 
+            undoButton.Name = "undoButton";
+            undoButton.ShortcutKeys = Keys.Control | Keys.Z;
+            undoButton.Size = new Size(144, 22);
+            undoButton.Text = "Undo";
+            undoButton.Click += UndoButtonPressed;
+            // 
+            // redoButton
+            // 
+            redoButton.Name = "redoButton";
+            redoButton.ShortcutKeys = Keys.Control | Keys.Y;
+            redoButton.Size = new Size(144, 22);
+            redoButton.Text = "Redo";
+            redoButton.Click += RedoButtonPressed;
+            // 
             // EditorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(543, 424);
+            ClientSize = new Size(543, 442);
             Controls.Add(mapBox);
-            Controls.Add(button2);
-            Controls.Add(button1);
             Controls.Add(groupBox1);
             Controls.Add(palletteGroup);
+            Controls.Add(menuStrip1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             Name = "EditorForm";
             Text = "EditorForm";
@@ -187,7 +246,11 @@
             palletteGroup.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)currentTileDisplay).EndInit();
+            mapBox.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -201,8 +264,15 @@
         private Button pColor2;
         private GroupBox groupBox1;
         private PictureBox currentTileDisplay;
-        private Button button1;
-        private Button button2;
         private GroupBox mapBox;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem newLevelButton;
+        private ToolStripMenuItem saveFileButton;
+        private ToolStripMenuItem saveAsButton;
+        private ToolStripMenuItem loadFileButton;
+        private ToolStripMenuItem editToolStripMenuItem;
+        private ToolStripMenuItem undoButton;
+        private ToolStripMenuItem redoButton;
     }
 }
