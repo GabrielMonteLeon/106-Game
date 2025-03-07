@@ -38,6 +38,9 @@
             groupBox1 = new GroupBox();
             currentTileDisplay = new PictureBox();
             mapBox = new GroupBox();
+            mapPanel = new Panel();
+            scrollBarHorizontal = new HScrollBar();
+            scrollBarVertical = new VScrollBar();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newLevelButton = new ToolStripMenuItem();
@@ -150,21 +153,51 @@
             // 
             // mapBox
             // 
+            mapBox.Controls.Add(mapPanel);
             mapBox.Controls.Add(scrollBarHorizontal);
             mapBox.Controls.Add(scrollBarVertical);
             mapBox.Location = new Point(131, 32);
             mapBox.Name = "mapBox";
-            mapBox.Size = new Size(400, 400);
+            mapBox.Size = new Size(417, 424);
             mapBox.TabIndex = 4;
             mapBox.TabStop = false;
             mapBox.Text = "Map";
+            // 
+            // mapPanel
+            // 
+            mapPanel.Location = new Point(6, 19);
+            mapPanel.Name = "mapPanel";
+            mapPanel.Size = new Size(384, 384);
+            mapPanel.TabIndex = 2;
+            // 
+            // scrollBarHorizontal
+            // 
+            scrollBarHorizontal.LargeChange = 4;
+            scrollBarHorizontal.Location = new Point(6, 404);
+            scrollBarHorizontal.Maximum = 16;
+            scrollBarHorizontal.Name = "scrollBarHorizontal";
+            scrollBarHorizontal.Size = new Size(383, 17);
+            scrollBarHorizontal.TabIndex = 1;
+            scrollBarHorizontal.Scroll += scrollBarHorizontal_Scroll;
+            // 
+            // scrollBarVertical
+            // 
+            scrollBarVertical.Enabled = false;
+            scrollBarVertical.LargeChange = 4;
+            scrollBarVertical.Location = new Point(391, 19);
+            scrollBarVertical.Maximum = 16;
+            scrollBarVertical.Name = "scrollBarVertical";
+            scrollBarVertical.ScaleScrollBarForDpiChange = false;
+            scrollBarVertical.Size = new Size(17, 384);
+            scrollBarVertical.TabIndex = 0;
+            scrollBarVertical.Scroll += scrollBarVertical_Scroll;
             // 
             // menuStrip1
             // 
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(543, 24);
+            menuStrip1.Size = new Size(559, 24);
             menuStrip1.TabIndex = 5;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -231,7 +264,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(543, 442);
+            ClientSize = new Size(559, 468);
             Controls.Add(mapBox);
             Controls.Add(groupBox1);
             Controls.Add(palletteGroup);
@@ -274,5 +307,8 @@
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem undoButton;
         private ToolStripMenuItem redoButton;
+        private HScrollBar scrollBarHorizontal;
+        private VScrollBar scrollBarVertical;
+        private Panel mapPanel;
     }
 }

@@ -83,12 +83,11 @@
             savePos = null;
 
             //calculate tile/map sizes
-            int mapHeight = mapBox.Height - 26;
-            int tileSize = mapHeight / height;
+            int tileSize = 32;
+            int mapHeight = tileSize * height;
             int mapWidth = tileSize * width;
-            //resize elements to fit map
-            mapBox.Width = mapWidth + 14;
-            this.Width = mapBox.Bounds.Right + 25;
+            //adjust scroll bars based on map size
+            AdjustScrollBars();
 
             //Create map picture boxes;
             for (int x = 0; x < width; x++)
@@ -99,7 +98,7 @@
                     tileMapVisuals[x, y] = tile;
                     //the first color is the default color
                     tile.BackColor = colorPalette[0];
-                    tile.Location = new Point(tileSize * x + 7, tileSize * y + 19);
+                    tile.Location = new Point(tileSize * x, tileSize * y);
                     tile.Size = new Size(tileSize, tileSize);
                     int currentX = x;
                     int currentY = y;
@@ -108,7 +107,7 @@
                     tile.MouseDown += delegate { OnTileClick(tile, currentX, currentY); };
                     tile.MouseEnter += delegate { OnTileMouseEnter(currentX, currentY); };
                     tile.MouseUp += RecordCurrentAction;
-                    mapBox.Controls.Add(tile);
+                    mapPanel.Controls.Add(tile);
                 }
             }
 
@@ -477,6 +476,21 @@
             redoButton.Enabled = CanRedo();
         }
 
+        private void AdjustScrollBars()
+        {
+            int visibleTilesX = mapPanel.Width / 32;
+            int visibleTilesY = mapPanel.Height / 32;
+
+            //Set scroll bar sizes
+            scrollBarHorizontal.LargeChange = visibleTilesX;
+            scrollBarVertical.LargeChange = visibleTilesY;
+            scrollBarHorizontal.Maximum = tileMapData.GetLength(0);
+            scrollBarVertical.Maximum = tileMapData.GetLength(1);
+            //Enable/Disable scroll bars
+            scrollBarHorizontal.Enabled = scrollBarHorizontal.LargeChange < scrollBarHorizontal.Maximum;
+            scrollBarVertical.Enabled = scrollBarVertical.LargeChange < scrollBarVertical.Maximum;
+        }
+
         private void SaveButtonPressed(object sender, EventArgs e)
         {
             Save();
@@ -495,6 +509,16 @@
         private void RedoButtonPressed(object sender, EventArgs e)
         {
             Redo();
+        }
+
+        private void scrollBarVertical_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
+        }
+
+        private void scrollBarHorizontal_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Horizontal scroll to {e.NewValue}.");
         }
     }
 }
