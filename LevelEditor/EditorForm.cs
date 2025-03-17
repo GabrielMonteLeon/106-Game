@@ -23,6 +23,10 @@
         private PictureBox[,] tileMapVisuals;
         private int selectedColorIndex;
 
+        private int scrollX;
+        private int scrollY;
+        private int tileSize;
+
         private string currentFile;
 
         /// <summary>
@@ -83,7 +87,7 @@
             savePos = null;
 
             //calculate tile/map sizes
-            int tileSize = 32;
+            tileSize = 32;
             int mapHeight = tileSize * height;
             int mapWidth = tileSize * width;
             //adjust scroll bars based on map size
@@ -476,6 +480,17 @@
             redoButton.Enabled = CanRedo();
         }
 
+        private void UpdateScroll()
+        {
+            for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+            {
+                for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                {
+                    tileMapVisuals[x, y].Location = new Point((x - scrollX) * tileSize, (y - scrollY) * tileSize);
+                }
+            }
+        }
+
         private void AdjustScrollBars()
         {
             int visibleTilesX = mapPanel.Width / 32;
@@ -511,14 +526,18 @@
             Redo();
         }
 
-        private void scrollBarVertical_Scroll(object sender, ScrollEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
-        }
-
         private void scrollBarHorizontal_Scroll(object sender, ScrollEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine($"Horizontal scroll to {e.NewValue}.");
+            scrollX = e.NewValue;
+            UpdateScroll();
+        }
+
+        private void scrollBarVertical_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
+            scrollY = e.NewValue;
+            UpdateScroll();
         }
     }
 }
