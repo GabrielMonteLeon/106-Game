@@ -4,10 +4,25 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MEDU
 {
+    enum MenuState
+    {
+        Menu,
+        Level,
+        LevelFailed,
+        LevelComplete,
+        Pause,
+    }
     public class Game1 : Game
     {
+        //field
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        
+        private double timer;
+        private int level;
+        private Player Player;
+
+
 
         public Game1()
         {
@@ -47,6 +62,22 @@ namespace MEDU
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+
+        public void GoToLevel(int level)
+        {
+
+        }
+
+        public void GoToMenu()
+        {
+
+        }
+
+        public void HandleCollision()
+        {
+
         }
     }
 }
