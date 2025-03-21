@@ -10,6 +10,9 @@ namespace MEDU
 {
     internal class Player : GameObject
     {
+
+        public bool isAlive;
+        
         private Vector2 velocity;
         private Double animationTimer;
         private bool facingRight;
