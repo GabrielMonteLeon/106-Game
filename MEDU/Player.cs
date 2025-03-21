@@ -84,6 +84,7 @@ namespace MEDU
                 case SpriteState.jump:
                     jumpVelocity -= gravity;
                     playerVelocity.Y = jumpVelocity;
+                    UpdatePosition();
 
                     // when player lands on the ground
                     if (jumpVelocity <= -initialJumpVelocity)
@@ -94,7 +95,8 @@ namespace MEDU
 
                 case SpriteState.walk:
                     playerVelocity.X = playerspeedX;
-                    
+                    UpdatePosition();
+
                     // idle
                     if (kb.IsKeyUp(Keys.A) && kb.IsKeyUp(Keys.Left) && kb.IsKeyUp(Keys.D) && kb.IsKeyUp(Keys.Right))
                     {
@@ -111,6 +113,11 @@ namespace MEDU
 
             // tracks kb state for next frame
             prevKb = kb;
+        }
+        public void UpdatePosition()
+        {
+            this.position.X += (int) playerVelocity.X;
+            this.position.Y -= (int) playerVelocity.Y;
         }
     }
 }
