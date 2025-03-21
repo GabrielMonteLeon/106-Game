@@ -29,6 +29,7 @@ namespace MEDU
         //menu fields
         private Rectangle Start;
         private Rectangle End;
+        private Vector2 cameraPosition;
         private Texture2D start_texture;
         private Texture2D end_texture;
         private MouseState pms;
@@ -81,6 +82,7 @@ namespace MEDU
                     break;
                 case (MenuState.Level):
                     PlayerOutofBounds(player);
+                    cameraPosition = new Vector2(player.Position.X, player.Position.Y);
                     if (!player.isAlive)
                     {
                         menuState = MenuState.LevelFailed;
