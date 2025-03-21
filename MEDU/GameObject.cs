@@ -12,8 +12,8 @@ namespace MEDU
     internal abstract class GameObject
     {
         //fields
-        private Rectangle position;
-        private Texture2D texture;
+        protected Rectangle position;
+        protected Texture2D texture;
 
         public GameObject(Rectangle position, Texture2D texture)
         {
