@@ -10,5 +10,6 @@ namespace MEDU
     {
         private bool passThrough;
         private bool isSafe;
+
     }
 }
