@@ -37,7 +37,8 @@ namespace MEDU
         // properties
         public bool isAlive { get => alive; set => alive = value; }
         public Vector2 PlayerVelocity { get => playerVelocity; }
-        
+        public float JumpVelocity { get => jumpVelocity; set => jumpVelocity = value; }
+
         // constructor
         public Player(Rectangle position, Texture2D texture) 
             : base(position, texture)
