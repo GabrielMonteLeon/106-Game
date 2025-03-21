@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MEDU
 {
@@ -20,8 +22,14 @@ namespace MEDU
         
         private double timer;
         private int level;
-        private Player Player;
+        private Player player;
+        private MenuState menuState;
 
+        //menu fields
+        private Rectangle Start;
+        private Rectangle End;
+        private Texture2D start_texture;
+        private Texture2D end_texture;
 
 
         public Game1()
@@ -36,11 +44,18 @@ namespace MEDU
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, GraphicsDevice.Viewport.Height / 2 - 50, 100, 100);
+            End = new Rectangle(Start.X,Start.Y, 100, 100); 
+            menuState = MenuState.Menu;
+            player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("CLEFT"));
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            start_texture = Content.Load<Texture2D>("Start");
+            end_texture = Content.Load<Texture2D>("End");
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -50,7 +65,30 @@ namespace MEDU
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            MouseState ms = Mouse.GetState();
+            Rectangle msr = new Rectangle(ms.X,ms.Y,1,1);   
+
+            switch (menuState)
+            {
+                case (MenuState.Menu):
+                    if (msr.Intersects(Start))
+                    {
+                        menuState = MenuState.Level;
+                    }
+                    break;
+                case (MenuState.Level):
+                    if (!player.isAlive)
+                    {
+                        menuState = MenuState.LevelFailed;
+                    }
+                    break;
+                case (MenuState.LevelFailed):
+                    if (msr.Intersects(End))
+                    {
+                        menuState = MenuState.Menu;
+                    }
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -59,7 +97,24 @@ namespace MEDU
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            switch (menuState)
+            {
+                case (MenuState.Menu):
+                    _spriteBatch.Draw(start_texture,Start, Color.White);
+                    break;
+                case (MenuState.Level):
+                    
+                    break;
+                case (MenuState.LevelFailed):
+                    _spriteBatch.Draw(end_texture, End, Color.White);
+                    break;
+            }
+
+            _spriteBatch.End();
+
+
 
             base.Draw(gameTime);
         }
@@ -77,7 +132,73 @@ namespace MEDU
 
         public void HandleCollision()
         {
-
+            List<GameObject> objects = new List<GameObject>();
+            //leaving the list like that for now to be changed once level has the field
+            foreach(GameObject gObject in objects)
+            {
+                if(gObject is Platform)
+                {
+                    Platform platform = (Platform)gObject;
+                    if (Player.Position.Intersects(platform.Position))
+                    {
+                        if (!platform.IsSafe)
+                        {
+                            //implement code for player dying
+                        }
+                        //move player and camera based on collision here
+                    }
+                }
+            }
         }
+
+        /// <summary>
+        /// Handles player collisions with obstacles
+        /// </summary>
+        //private void ResolveCollisions()
+        //{
+        //    Rectangle playerRect = GetPlayerRect();
+        //    //find all intersections
+        //    List<Rectangle> intersections = new List<Rectangle>();
+        //    foreach (Rectangle obstacle in obstacleRects)
+        //    {
+        //        if (playerRect.Intersects(obstacle))
+        //            intersections.Add(obstacle);
+        //    }
+
+        //    //resolve horizontally
+        //    foreach (Rectangle intersection in intersections)
+        //    {
+        //        Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+        //        //Resolve horizontally only if the overlap's width is less than its height
+        //        //if the overlap is a square, prioritize horizontal resolution
+        //        if (overlap.Width > overlap.Height || overlap.Width == 0)
+        //            continue;
+
+        //        //if to the left of the obstacle, move left. otherwise, move right
+        //        if (playerRect.X < intersection.X)
+        //            playerRect.X -= overlap.Width;
+        //        else
+        //            playerRect.X += overlap.Width;
+        //    }
+
+        //    //resolve vertically
+        //    foreach (Rectangle intersection in intersections)
+        //    {
+        //        Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+        //        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+        //        if (overlap.Height == 0)
+        //            continue;
+
+        //        //if above the obstacle, move up. otherwise, move down
+        //        if (playerRect.Y < intersection.Y)
+        //            playerRect.Y -= overlap.Height;
+        //        else
+        //            playerRect.Y += overlap.Height;
+        //        playerVelocity.Y = 0;
+        //    }
+        //    playerPosition = playerRect.Location.ToVector2();
+        //}
     }
 }
