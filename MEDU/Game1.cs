@@ -180,25 +180,28 @@ namespace MEDU
                         else
                             playerRect.X += overlap.Width;
 
-
-                        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                        if (overlap.Height == 0)
-                            continue;
-
-                        //if above the obstacle, move up. otherwise, move down
-                        if (playerRect.Y < platform.Position.Y)
-                        {
-                            if (platform.PassThrough)
-                                playerRect.Y += overlap.Height;
-                            else
-                                playerRect.Y -= overlap.Height;
-                        }
-                        else
-                            playerRect.Y += overlap.Height;
-
-
-                        //playerVelocity.Y = 0; UPDATE THIS WHEN PLAYER CLASS IS UPDATED
                         player.Position = playerRect;
+                        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+                        if (player.Position.Intersects(platform.Position))
+                        {
+                            if (overlap.Height == 0)
+                                continue;
+
+                            //if above the obstacle, move up. otherwise, move down
+                            if (playerRect.Y < platform.Position.Y)
+                            {
+                                if (platform.PassThrough)
+                                    playerRect.Y += overlap.Height;
+                                else
+                                    playerRect.Y -= overlap.Height;
+                            }
+                            else
+                                playerRect.Y += overlap.Height;
+
+
+                            player.JumpVelocity = 0;
+                            player.Position = playerRect;
+                        }
 
                     }
                 }
