@@ -28,7 +28,29 @@ namespace MEDU
 
         public override void draw(SpriteBatch spriteBatch, Vector2 camPosition)
         {
+            if(Position.Width == Position.Height)
+            {
+                //Render half of left and right textures
+                int textureSize = leftTexture.Width;
 
+                Rectangle leftSourceRect = new Rectangle(0, 0, leftTexture.Width / 2, leftTexture.Height);
+                Rectangle rightSourceRect = leftSourceRect;
+                rightSourceRect.X += rightSourceRect.Width;
+
+                Rectangle leftDestRect = Position;
+                leftDestRect.Width /= 2;
+                Rectangle rightDestRect = leftDestRect;
+                rightDestRect.X += rightDestRect.Width;
+                spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.White);
+                spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.White);
+            }
+            else
+            {
+                Rectangle destination = Position;
+                destination.Width = destination.Height;
+                spriteBatch.Draw(leftTexture, destination, Color.White);
+
+            }
         }
     }
 }
