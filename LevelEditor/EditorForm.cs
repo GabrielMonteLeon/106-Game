@@ -333,7 +333,13 @@
 
         private void SelectColor(int colorIndex)
         {
-            currentTileDisplay.BackColor = colorPalette[colorIndex];
+            for(int i = 0; i < paletteButtons.Length; i++)
+            {
+                if (i != colorIndex)
+                    paletteButtons[i].FlatStyle = FlatStyle.Flat;
+                else
+                    paletteButtons[i].FlatStyle = FlatStyle.Standard;
+            }
             selectedColorIndex = colorIndex;
         }
 

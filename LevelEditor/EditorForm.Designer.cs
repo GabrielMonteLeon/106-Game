@@ -35,8 +35,6 @@
             pColor3 = new Button();
             pColor2 = new Button();
             pColor1 = new Button();
-            groupBox1 = new GroupBox();
-            currentTileDisplay = new PictureBox();
             mapBox = new GroupBox();
             mapPanel = new Panel();
             scrollBarHorizontal = new HScrollBar();
@@ -51,8 +49,6 @@
             undoButton = new ToolStripMenuItem();
             redoButton = new ToolStripMenuItem();
             palletteGroup.SuspendLayout();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)currentTileDisplay).BeginInit();
             mapBox.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -75,6 +71,7 @@
             // pColor6
             // 
             pColor6.BackColor = Color.Black;
+            pColor6.FlatStyle = FlatStyle.Flat;
             pColor6.Location = new Point(47, 110);
             pColor6.Name = "pColor6";
             pColor6.Size = new Size(45, 45);
@@ -85,6 +82,7 @@
             // pColor5
             // 
             pColor5.BackColor = Color.FromArgb(200, 50, 150);
+            pColor5.FlatStyle = FlatStyle.Flat;
             pColor5.Location = new Point(3, 110);
             pColor5.Name = "pColor5";
             pColor5.Size = new Size(45, 45);
@@ -95,6 +93,7 @@
             // pColor4
             // 
             pColor4.BackColor = SystemColors.ScrollBar;
+            pColor4.FlatStyle = FlatStyle.Flat;
             pColor4.Location = new Point(47, 66);
             pColor4.Name = "pColor4";
             pColor4.Size = new Size(45, 45);
@@ -105,6 +104,7 @@
             // pColor3
             // 
             pColor3.BackColor = Color.FromArgb(140, 90, 0);
+            pColor3.FlatStyle = FlatStyle.Flat;
             pColor3.Location = new Point(3, 66);
             pColor3.Name = "pColor3";
             pColor3.Size = new Size(45, 45);
@@ -115,6 +115,7 @@
             // pColor2
             // 
             pColor2.BackColor = Color.FromArgb(0, 200, 0);
+            pColor2.FlatStyle = FlatStyle.Flat;
             pColor2.Location = new Point(47, 22);
             pColor2.Name = "pColor2";
             pColor2.Size = new Size(45, 45);
@@ -125,31 +126,13 @@
             // pColor1
             // 
             pColor1.BackColor = Color.FromArgb(100, 140, 255);
+            pColor1.FlatStyle = FlatStyle.Flat;
             pColor1.Location = new Point(3, 22);
             pColor1.Name = "pColor1";
             pColor1.Size = new Size(45, 45);
             pColor1.TabIndex = 0;
             pColor1.UseVisualStyleBackColor = false;
             pColor1.Click += SelectColor;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(currentTileDisplay);
-            groupBox1.Location = new Point(21, 199);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(95, 101);
-            groupBox1.TabIndex = 1;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Current Tile";
-            // 
-            // currentTileDisplay
-            // 
-            currentTileDisplay.BackColor = Color.FromArgb(100, 140, 255);
-            currentTileDisplay.Location = new Point(18, 22);
-            currentTileDisplay.Name = "currentTileDisplay";
-            currentTileDisplay.Size = new Size(61, 61);
-            currentTileDisplay.TabIndex = 0;
-            currentTileDisplay.TabStop = false;
             // 
             // mapBox
             // 
@@ -266,7 +249,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(559, 468);
             Controls.Add(mapBox);
-            Controls.Add(groupBox1);
             Controls.Add(palletteGroup);
             Controls.Add(menuStrip1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -277,8 +259,6 @@
             FormClosing += OnClosing;
             MouseUp += RecordCurrentAction;
             palletteGroup.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)currentTileDisplay).EndInit();
             mapBox.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -295,8 +275,6 @@
         private Button pColor4;
         private Button pColor3;
         private Button pColor2;
-        private GroupBox groupBox1;
-        private PictureBox currentTileDisplay;
         private GroupBox mapBox;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
