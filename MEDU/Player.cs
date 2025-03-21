@@ -140,8 +140,10 @@ namespace MEDU
         /// </summary>
         public void UpdatePosition()
         {
-            this.position.X += (int) playerVelocity.X;
-            this.position.Y -= (int) playerVelocity.Y;
+            Rectangle pos = Position;
+            pos.X += (int) playerVelocity.X;
+            pos.Y -= (int) playerVelocity.Y;
+            this.Position = pos;
         }
     }
 }
