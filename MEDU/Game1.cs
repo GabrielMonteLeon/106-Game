@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MEDU
 {
@@ -77,7 +79,23 @@ namespace MEDU
 
         public void HandleCollision()
         {
-
+            List<GameObject> objects = new List<GameObject>();
+            //leaving the list like that for now to be changed once level has the field
+            foreach(GameObject gObject in objects)
+            {
+                if(gObject is Platform)
+                {
+                    Platform platform = (Platform)gObject;
+                    if (Player.Position.Intersects(platform.Position))
+                    {
+                        if (!platform.IsSafe)
+                        {
+                            //implement code for player dying
+                        }
+                        //move player and camera based on collision here
+                    }
+                }
+            }
         }
     }
 }
