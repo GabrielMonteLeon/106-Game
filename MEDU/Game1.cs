@@ -93,7 +93,7 @@ namespace MEDU
                     }
                     break;
             }
-
+            player.update();
             base.Update(gameTime);
         }
 
@@ -109,7 +109,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
                 case (MenuState.Level):
-                    
+                    player.draw(_spriteBatch, new Vector2(0,0));
                     break;
                 case (MenuState.LevelFailed):
                     _spriteBatch.Draw(end_texture, End, Color.White);
@@ -133,7 +133,11 @@ namespace MEDU
         {
 
         }
-
+        
+        /// <summary>
+        /// Makes character dead if they run out of bounds
+        /// </summary>
+        /// <param name="player"></param>
         private void PlayerOutofBounds(Player player)
         {
             Rectangle position = player.Position;
