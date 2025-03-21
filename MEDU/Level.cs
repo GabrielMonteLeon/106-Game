@@ -23,8 +23,6 @@ namespace MEDU
         /// <summary>
         /// Creates a new level from specific data. 
         /// </summary>
-        /// <param name="platforms"></param>
-        /// <param name="endTrigger"></param>
         public Level(List<Platform> platforms, Vector2 playerStartPos, Rectangle endTrigger)
         {
             this.platforms = platforms;
@@ -35,6 +33,19 @@ namespace MEDU
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraOffset, bool debug = false)
         {
 
+        }
+
+        public string GetData()
+        {
+            string data = "";
+            data += $"{platforms.Count} total platforms:";
+            foreach(Platform platform in platforms)
+            {
+                data += $"\n  Platform at {platform.Position.Location} with size {platform.Position.Size}";
+            }
+            data += $"\nPlayer Starting Pos: {playerStartPos}";
+            data += $"\nEnd Trigger: {endTrigger}";
+            return data;
         }
 
         public static Level LoadLevelFromFile(string filePath)
@@ -48,8 +59,8 @@ namespace MEDU
             reader.Close();
 
             List<Platform> platforms = new List<Platform>();
-            Vector2 startPos;
-            Rectangle endTrigger;
+            Vector2 startPos = new Vector2(-1, -1);
+            Rectangle endTrigger = new Rectangle(-1, -1, -1, -1);
 
             for (int y = 0; y < height; y++)
             {
@@ -70,9 +81,27 @@ namespace MEDU
                                 currentPlatformStart = -1;
                             }
                             break;
+                        case 2: //player start
+                            startPos = new Vector2(x, y);
+                            break;
+                        case 3: //platform
+                            if (currentPlatformStart == -1)
+                                currentPlatformStart = x;
+                            break;
+                        case 4: //level end
+                            endTrigger = new Rectangle(x, y, 1, 1);
+                            break;
+                        default:
+                            System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
+                            break;
                     }
                 }
             }
+            if (startPos.X < 0)
+                System.Diagnostics.Debug.WriteLine("Warning: Start Pos not defined");
+            if (endTrigger.X < 0)
+                System.Diagnostics.Debug.WriteLine("Warning: End Trigger not defined");
+            return new Level(platforms, startPos, endTrigger);
         }
     }
 }
