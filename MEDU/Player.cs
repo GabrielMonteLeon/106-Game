@@ -19,7 +19,7 @@ namespace MEDU
     {
         // fields
         private Double animationTimer;
-        private bool isAlive;
+        private bool alive;
 
         private bool facingRight;
         private SpriteState spriteState;
@@ -35,13 +35,14 @@ namespace MEDU
 
 
         // properties
-        public bool Alive { get => isAlive; set => isAlive = value; }
+        public bool isAlive { get => alive; set => alive = value; }
         public Vector2 PlayerVelocity { get => playerVelocity; }
         
         // constructor
         public Player(Rectangle position, Texture2D texture) 
             : base(position, texture)
         {
+            alive = true;
             facingRight = true;
             spriteState = SpriteState.idle;
 
