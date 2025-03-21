@@ -80,6 +80,7 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.Level):
+                    PlayerOutofBounds(player);
                     if (!player.isAlive)
                     {
                         menuState = MenuState.LevelFailed;
@@ -133,6 +134,19 @@ namespace MEDU
 
         }
 
+        private void PlayerOutofBounds(Player player)
+        {
+            Rectangle position = player.Position;
+            if((position.X + position.Width) < 0)
+            {
+                player.isAlive = false;
+            }
+            if((position.Y > GraphicsDevice.Viewport.Height))
+            {
+                player.isAlive = false;
+            }
+        }
+
         public void HandleCollision()
         {
             List<GameObject> objects = new List<GameObject>();
@@ -147,6 +161,7 @@ namespace MEDU
                         if (!platform.IsSafe)
                         {
                             //implement code for player dying
+                            player.isAlive = false;
                         }
 
 
