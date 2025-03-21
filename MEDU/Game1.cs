@@ -23,6 +23,7 @@ namespace MEDU
         
         private double timer;
         private int level;
+        private Level currentLevel;
         private Player player;
         private MenuState menuState;
 
@@ -151,61 +152,57 @@ namespace MEDU
 
         public void HandleCollision()
         {
-            List<GameObject> objects = new List<GameObject>();
-            //leaving the list like that for now to be changed once level has the field
-            foreach(GameObject gObject in objects)
+            List<Platform> objects = currentLevel.Platforms;
+            foreach (Platform platform in objects)
             {
-                if(gObject is Platform)
+                if (player.Position.Intersects(platform.Position))
                 {
-                    Platform platform = (Platform)gObject;
+                    if (!platform.IsSafe)
+                    {
+                        //implement code for player dying
+                        player.isAlive = false;
+                    }
+
+
+                    //move player and camera based on collision here
+                    Rectangle playerRect = player.Position;
+                    Rectangle overlap = Rectangle.Intersect(platform.Position, playerRect);
+
+                    //Resolve horizontally only if the overlap's width is less than its height
+                    //if the overlap is a square, prioritize horizontal resolution
+                    if (overlap.Width > overlap.Height || overlap.Width == 0)
+                        continue;
+
+                    //if to the left of the obstacle, move left. otherwise, move right
+                    if (playerRect.X < platform.Position.X)
+                        playerRect.X -= overlap.Width;
+                    else
+                        playerRect.X += overlap.Width;
+
+                    player.Position = playerRect;
+                    //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
                     if (player.Position.Intersects(platform.Position))
                     {
-                        if (!platform.IsSafe)
-                        {
-                            //implement code for player dying
-                            player.isAlive = false;
-                        }
-
-
-                        //move player and camera based on collision here
-                        Rectangle playerRect = player.Position;
-                        Rectangle overlap = Rectangle.Intersect(platform.Position, playerRect);
-
-                        //Resolve horizontally only if the overlap's width is less than its height
-                        //if the overlap is a square, prioritize horizontal resolution
-                        if (overlap.Width > overlap.Height || overlap.Width == 0)
+                        if (overlap.Height == 0)
                             continue;
 
-                        //if to the left of the obstacle, move left. otherwise, move right
-                        if (playerRect.X < platform.Position.X)
-                            playerRect.X -= overlap.Width;
-                        else
-                            playerRect.X += overlap.Width;
-
-                        player.Position = playerRect;
-                        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                        if (player.Position.Intersects(platform.Position))
+                        //if above the obstacle, move up. otherwise, move down
+                        if (playerRect.Y < platform.Position.Y)
                         {
-                            if (overlap.Height == 0)
-                                continue;
-
-                            //if above the obstacle, move up. otherwise, move down
-                            if (playerRect.Y < platform.Position.Y)
-                            {
-                                if (platform.PassThrough)
-                                    playerRect.Y += overlap.Height;
-                                else
-                                    playerRect.Y -= overlap.Height;
-                            }
-                            else
+                            if (platform.PassThrough)
                                 playerRect.Y += overlap.Height;
-
-
-                            player.JumpVelocity = 0;
-                            player.Position = playerRect;
+                            else
+                                playerRect.Y -= overlap.Height;
                         }
+                        else
+                            playerRect.Y += overlap.Height;
 
+
+                        player.JumpVelocity = 0;
+                        player.Position = playerRect;
                     }
+
+
                 }
             }
         }
