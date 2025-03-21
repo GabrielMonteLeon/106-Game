@@ -10,11 +10,26 @@ namespace MEDU
 {
     internal class Player : GameObject
     {
+
         public bool isAlive;
-        Vector2 velocity;
+        
+        private Vector2 velocity;
+        private Double animationTimer;
+        private bool facingRight;
+        private enum SpriteState
+        {
+            idle,
+            jump,
+            walk
+        }
         public Player(Rectangle position, Texture2D texture) : base(position, texture)
         {
-            //empty for now so it can be fully implemented later
+            velocity = new Vector2(0, 0);
+            facingRight = true;
+        }
+        public override void update()
+        {
+
         }
     }
 }

@@ -20,7 +20,7 @@ namespace MEDU
             this.position = position;
             this.texture = texture;
         }
-        public void update()
+        public virtual void update()
         {
             //default gameobject update is empty for now
         }

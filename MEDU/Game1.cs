@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MEDU
 {
@@ -130,7 +132,73 @@ namespace MEDU
 
         public void HandleCollision()
         {
-
+            List<GameObject> objects = new List<GameObject>();
+            //leaving the list like that for now to be changed once level has the field
+            foreach(GameObject gObject in objects)
+            {
+                if(gObject is Platform)
+                {
+                    Platform platform = (Platform)gObject;
+                    if (Player.Position.Intersects(platform.Position))
+                    {
+                        if (!platform.IsSafe)
+                        {
+                            //implement code for player dying
+                        }
+                        //move player and camera based on collision here
+                    }
+                }
+            }
         }
+
+        /// <summary>
+        /// Handles player collisions with obstacles
+        /// </summary>
+        //private void ResolveCollisions()
+        //{
+        //    Rectangle playerRect = GetPlayerRect();
+        //    //find all intersections
+        //    List<Rectangle> intersections = new List<Rectangle>();
+        //    foreach (Rectangle obstacle in obstacleRects)
+        //    {
+        //        if (playerRect.Intersects(obstacle))
+        //            intersections.Add(obstacle);
+        //    }
+
+        //    //resolve horizontally
+        //    foreach (Rectangle intersection in intersections)
+        //    {
+        //        Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+        //        //Resolve horizontally only if the overlap's width is less than its height
+        //        //if the overlap is a square, prioritize horizontal resolution
+        //        if (overlap.Width > overlap.Height || overlap.Width == 0)
+        //            continue;
+
+        //        //if to the left of the obstacle, move left. otherwise, move right
+        //        if (playerRect.X < intersection.X)
+        //            playerRect.X -= overlap.Width;
+        //        else
+        //            playerRect.X += overlap.Width;
+        //    }
+
+        //    //resolve vertically
+        //    foreach (Rectangle intersection in intersections)
+        //    {
+        //        Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+        //        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+        //        if (overlap.Height == 0)
+        //            continue;
+
+        //        //if above the obstacle, move up. otherwise, move down
+        //        if (playerRect.Y < intersection.Y)
+        //            playerRect.Y -= overlap.Height;
+        //        else
+        //            playerRect.Y += overlap.Height;
+        //        playerVelocity.Y = 0;
+        //    }
+        //    playerPosition = playerRect.Location.ToVector2();
+        //}
     }
 }
