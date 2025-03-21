@@ -117,7 +117,12 @@ namespace MEDU
 
                         //if above the obstacle, move up. otherwise, move down
                         if (playerRect.Y < platform.Position.Y)
-                            playerRect.Y -= overlap.Height;
+                        {
+                            if (platform.PassThrough)
+                                playerRect.Y += overlap.Height;
+                            else
+                                playerRect.Y -= overlap.Height;
+                        }
                         else
                             playerRect.Y += overlap.Height;
                         //playerVelocity.Y = 0; UPDATE THIS WHEN PLAYER CLASS IS UPDATED
