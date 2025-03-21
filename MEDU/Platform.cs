@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MEDU
 {
-    internal class Platform : GameObject
+    internal class Platform
     {
         private bool passThrough;
         private bool isSafe;

@@ -10,6 +10,7 @@ namespace MEDU
 {
     internal class Player : GameObject
     {
+        public bool isAlive;
         Vector2 velocity;
         public Player(Rectangle position, Texture2D texture) : base(position, texture)
         {
