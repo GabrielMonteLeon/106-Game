@@ -31,6 +31,7 @@ namespace MEDU
         private Rectangle End;
         private Texture2D start_texture;
         private Texture2D end_texture;
+        private MouseState pms;
 
 
         public Game1()
@@ -65,14 +66,15 @@ namespace MEDU
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            //mouse position + rectangle
             MouseState ms = Mouse.GetState();
             Rectangle msr = new Rectangle(ms.X,ms.Y,1,1);   
 
+            //Basic finite for going through basic game
             switch (menuState)
             {
                 case (MenuState.Menu):
-                    if (msr.Intersects(Start))
+                    if (msr.Intersects(Start) && ms.LeftButton == ButtonState.Pressed)
                     {
                         menuState = MenuState.Level;
                     }
@@ -84,7 +86,7 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.LevelFailed):
-                    if (msr.Intersects(End))
+                    if (msr.Intersects(End) && ms.LeftButton == ButtonState.Pressed)
                     {
                         menuState = MenuState.Menu;
                     }
@@ -99,7 +101,7 @@ namespace MEDU
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-
+            //temporary menu demo draws
             switch (menuState)
             {
                 case (MenuState.Menu):
@@ -119,7 +121,7 @@ namespace MEDU
 
             base.Draw(gameTime);
         }
-
+        
 
         public void GoToLevel(int level)
         {
