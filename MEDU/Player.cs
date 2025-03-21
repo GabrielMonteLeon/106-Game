@@ -37,7 +37,8 @@ namespace MEDU
         // properties
         public bool isAlive { get => alive; set => alive = value; }
         public Vector2 PlayerVelocity { get => playerVelocity; }
-        
+        public float JumpVelocity { get => jumpVelocity; set => jumpVelocity = value; }
+
         // constructor
         public Player(Rectangle position, Texture2D texture) 
             : base(position, texture)
@@ -57,7 +58,9 @@ namespace MEDU
         public override void update()
         {
             KeyboardState kb = Keyboard.GetState();
+            UpdatePosition();
 
+            // player FSM
             switch (spriteState)
             {
                 case SpriteState.idle:
@@ -65,12 +68,14 @@ namespace MEDU
                     if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
                     {
                         spriteState = SpriteState.walk;
+                        playerVelocity.X = -playerspeedX;
                         facingRight = false;
                     }
                     // walk right
                     if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
                     {
                         spriteState = SpriteState.walk;
+                        playerVelocity.X = playerspeedX;
                         facingRight = true;
                     }
                     // jump (single press)
@@ -84,19 +89,35 @@ namespace MEDU
                 case SpriteState.jump:
                     jumpVelocity -= gravity;
                     playerVelocity.Y = jumpVelocity;
-                    UpdatePosition();
+
+                    // can still move in the air
+                    // left
+                    if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
+                    {
+                        playerVelocity.X = -playerspeedX; 
+                        facingRight = false;
+                    }
+                    // right
+                    if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
+                    {
+                        playerVelocity.X = -playerspeedX; 
+                        facingRight = true;
+                    }
+                    // no movement
+                    if (kb.IsKeyUp(Keys.A) && kb.IsKeyUp(Keys.Left) && kb.IsKeyUp(Keys.D) && kb.IsKeyUp(Keys.Right))
+                    {
+                        playerVelocity.X = 0;
+                    }
 
                     // when player lands on the ground
                     if (jumpVelocity <= -initialJumpVelocity)
                     {
                         spriteState = SpriteState.idle;
+                        jumpVelocity = 0;
                     }
                     break;
 
                 case SpriteState.walk:
-                    playerVelocity.X = playerspeedX;
-                    UpdatePosition();
-
                     // idle
                     if (kb.IsKeyUp(Keys.A) && kb.IsKeyUp(Keys.Left) && kb.IsKeyUp(Keys.D) && kb.IsKeyUp(Keys.Right))
                     {
@@ -114,10 +135,15 @@ namespace MEDU
             // tracks kb state for next frame
             prevKb = kb;
         }
+        /// <summary>
+        /// updates player position based on velocity
+        /// </summary>
         public void UpdatePosition()
         {
-            this.position.X += (int) playerVelocity.X;
-            this.position.Y -= (int) playerVelocity.Y;
+            Rectangle pos = Position;
+            pos.X += (int) playerVelocity.X;
+            pos.Y -= (int) playerVelocity.Y;
+            this.Position = pos;
         }
     }
 }
