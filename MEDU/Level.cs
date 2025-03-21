@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,12 @@ namespace MEDU
         public List<Platform> Platforms => platforms;
         public Vector2 PlayerStartPos => playerStartPos;
         public Rectangle EndTrigger => endTrigger;
+
+        public const int TILESIZE = 100;
+
+        //Assets
+        private static Texture2D[] sprites;
+        private enum SpriteID { CloudLeft, CloudMid, CloudRight }
 
         /// <summary>
         /// Creates a new level from specific data. 
@@ -75,21 +82,20 @@ namespace MEDU
                             if(currentPlatformStart != -1)
                             {
                                 platforms.Add(new Platform(
-                                    new Rectangle(currentPlatformStart, y, x - currentPlatformStart, 1),
-                                    null!, true, true
-                                    ));
+                                    new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
+                                    sprites[(int)SpriteID.CloudMid], sprites[(int)SpriteID.CloudLeft], sprites[(int)SpriteID.CloudRight], true, true));
                                 currentPlatformStart = -1;
                             }
                             break;
                         case 2: //player start
-                            startPos = new Vector2(x, y);
+                            startPos = new Vector2(x * TILESIZE, y * TILESIZE);
                             break;
                         case 3: //platform
                             if (currentPlatformStart == -1)
                                 currentPlatformStart = x;
                             break;
                         case 4: //level end
-                            endTrigger = new Rectangle(x, y, 1, 1);
+                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, 1, 1);
                             break;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
@@ -102,6 +108,17 @@ namespace MEDU
             if (endTrigger.X < 0)
                 System.Diagnostics.Debug.WriteLine("Warning: End Trigger not defined");
             return new Level(platforms, startPos, endTrigger);
+        }
+
+        /// <summary>
+        /// Loads the sprite assets needed for level creation and stores them.
+        /// </summary>
+        public static void LoadAssets(ContentManager content)
+        {
+            sprites = new Texture2D[3];
+            sprites[(int)SpriteID.CloudLeft] = content.Load<Texture2D>("CLEFT");
+            sprites[(int)SpriteID.CloudMid] = content.Load<Texture2D>("CMID");
+            sprites[(int)SpriteID.CloudRight] = content.Load<Texture2D>("CRIGHT");
         }
     }
 }

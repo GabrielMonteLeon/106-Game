@@ -43,6 +43,8 @@ namespace MEDU
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
+            Level.LoadAssets(Content);
         }
 
         protected override void Update(GameTime gameTime)

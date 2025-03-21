@@ -49,3 +49,6 @@
 /processorParam:TextureFormat=Color
 /build:CRIGHT.png
 
+#begin test level.level
+/copy:test level.level
+
