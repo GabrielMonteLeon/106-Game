@@ -62,6 +62,8 @@ namespace MEDU
 
 
             // TODO: use this.Content to load your game content here
+            Level.LoadAssets(Content);
+            //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
 
         protected override void Update(GameTime gameTime)

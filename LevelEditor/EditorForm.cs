@@ -23,6 +23,10 @@
         private PictureBox[,] tileMapVisuals;
         private int selectedColorIndex;
 
+        private int scrollX;
+        private int scrollY;
+        private int tileSize;
+
         private string currentFile;
 
         /// <summary>
@@ -69,7 +73,7 @@
         /// </summary>
         public void InitNewMap(int width, int height)
         {
-            if(tileMapData != null)
+            if (tileMapData != null)
             {
                 Cleanup();
             }
@@ -83,12 +87,11 @@
             savePos = null;
 
             //calculate tile/map sizes
-            int mapHeight = mapBox.Height - 26;
-            int tileSize = mapHeight / height;
+            tileSize = 32;
+            int mapHeight = tileSize * height;
             int mapWidth = tileSize * width;
-            //resize elements to fit map
-            mapBox.Width = mapWidth + 14;
-            this.Width = mapBox.Bounds.Right + 25;
+            //adjust scroll bars based on map size
+            AdjustScrollBars();
 
             //Create map picture boxes;
             for (int x = 0; x < width; x++)
@@ -99,7 +102,7 @@
                     tileMapVisuals[x, y] = tile;
                     //the first color is the default color
                     tile.BackColor = colorPalette[0];
-                    tile.Location = new Point(tileSize * x + 7, tileSize * y + 19);
+                    tile.Location = new Point(tileSize * x, tileSize * y);
                     tile.Size = new Size(tileSize, tileSize);
                     int currentX = x;
                     int currentY = y;
@@ -108,11 +111,12 @@
                     tile.MouseDown += delegate { OnTileClick(tile, currentX, currentY); };
                     tile.MouseEnter += delegate { OnTileMouseEnter(currentX, currentY); };
                     tile.MouseUp += RecordCurrentAction;
-                    mapBox.Controls.Add(tile);
+                    mapPanel.Controls.Add(tile);
                 }
             }
 
             UpdateTitle();
+            UpdateButtons();
         }
 
         private void LoadButtonPressed(object sender, EventArgs e)
@@ -144,14 +148,13 @@
                 width = reader.ReadByte();
                 height = reader.ReadByte();
                 data = reader.ReadBytes(width * height);
-                //check safety byte
-                if(reader.ReadByte() != 100)
+                if (data.Length < width * height)
                 {
                     MessageBox.Show("Unable to load due to corrupted data.", "Corrupted File", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Unable to load due to the following error: " + ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -163,14 +166,15 @@
             }
             InitNewMap(width, height);
             currentFile = filePath;
-            for(int x = 0; x < width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for(int y = 0; y < height; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    PaintTile(x, y, data[x*height + y], false);
+                    PaintTile(x, y, data[x * height + y], false);
                 }
             }
             UpdateTitle();
+            UpdateButtons();
 
             MessageBox.Show("Successfully Loaded");
             return true;
@@ -178,7 +182,7 @@
 
         private void OnClosing(object sender, FormClosingEventArgs e)
         {
-            if(!CheckSaveOnExit())
+            if (!CheckSaveOnExit())
             {
                 e.Cancel = true;
                 return;
@@ -218,11 +222,6 @@
                 default:
                     return false;
             }
-        }
-
-        private void SaveButtonPressed(object sender, EventArgs e)
-        {
-            Save();
         }
 
         /// <summary>
@@ -271,17 +270,15 @@
                 //write dimensions
                 writer.Write((byte)tileMapData.GetLength(0));
                 writer.Write((byte)tileMapData.GetLength(1));
-                for(int x = 0; x < tileMapData.GetLength(0); x++)
+                for (int x = 0; x < tileMapData.GetLength(0); x++)
                 {
                     for (int y = 0; y < tileMapData.GetLength(1); y++)
                     {
                         writer.Write((byte)tileMapData[x, y]);
                     }
                 }
-                //extra safety byte to easily check if data ends early when loading
-                writer.Write((byte)100);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Unable to save due to the following error: " + ex.Message, "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -336,7 +333,13 @@
 
         private void SelectColor(int colorIndex)
         {
-            currentTileDisplay.BackColor = colorPalette[colorIndex];
+            for(int i = 0; i < paletteButtons.Length; i++)
+            {
+                if (i != colorIndex)
+                    paletteButtons[i].FlatStyle = FlatStyle.Flat;
+                else
+                    paletteButtons[i].FlatStyle = FlatStyle.Standard;
+            }
             selectedColorIndex = colorIndex;
         }
 
@@ -362,6 +365,7 @@
                 {
                     currentAction = new ActionData(colorIndex);
                     UpdateTitle();
+                    UpdateButtons();
                 }
                 currentAction.Value.paintedCoords.Add((x, y, prevColorIndex));
             }
@@ -379,15 +383,22 @@
             //so this function is included in way more places than it really should be
             if (currentAction == null)
                 return;
+
+            System.Diagnostics.Debug.WriteLine($"\nRecording draw action with color {currentAction.Value.newColorIndex}.");
+
             //Delete undo history past this point
             while (undoPos != undoQueue.Last)
+            {
+                System.Diagnostics.Debug.WriteLine($"Deleting overwritten action.");
                 undoQueue.RemoveLast();
+            }
 
             undoQueue.AddLast(currentAction.Value);
             undoPos = undoQueue.Last;
             currentAction = null;
 
             UpdateTitle();
+            UpdateButtons();
         }
 
         public void Undo()
@@ -403,6 +414,12 @@
             undoPos = undoPos.Previous;
 
             UpdateTitle();
+            UpdateButtons();
+        }
+
+        public bool CanUndo()
+        {
+            return undoPos != null;
         }
 
         public void Redo()
@@ -430,6 +447,22 @@
             }
 
             UpdateTitle();
+            UpdateButtons();
+        }
+
+        public bool CanRedo()
+        {
+            //if there's no actions performed at all...
+            if (undoQueue.First == null)
+                return false;
+            //if there's been any actions, and all of them have been undone...
+            else if (undoPos == null)
+                return true;
+            //if we're at the end of the undo queue...
+            else if (undoPos.Next == null)
+                return false;
+            else
+                return true;
         }
 
         private void UpdateTitle()
@@ -444,6 +477,73 @@
                 titleText += "*";
             }
             this.Text = titleText;
+        }
+
+        private void UpdateButtons()
+        {
+            saveFileButton.Enabled = !IsSaved || currentFile == null;
+            undoButton.Enabled = CanUndo();
+            redoButton.Enabled = CanRedo();
+        }
+
+        private void UpdateScroll()
+        {
+            for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+            {
+                for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                {
+                    tileMapVisuals[x, y].Location = new Point((x - scrollX) * tileSize, (y - scrollY) * tileSize);
+                }
+            }
+        }
+
+        private void AdjustScrollBars()
+        {
+            int visibleTilesX = mapPanel.Width / 32;
+            int visibleTilesY = mapPanel.Height / 32;
+
+            //Set scroll bar sizes
+            scrollBarHorizontal.LargeChange = visibleTilesX;
+            scrollBarVertical.LargeChange = visibleTilesY;
+            scrollBarHorizontal.Maximum = tileMapData.GetLength(0);
+            scrollBarVertical.Maximum = tileMapData.GetLength(1);
+            //Enable/Disable scroll bars
+            scrollBarHorizontal.Enabled = scrollBarHorizontal.LargeChange < scrollBarHorizontal.Maximum;
+            scrollBarVertical.Enabled = scrollBarVertical.LargeChange < scrollBarVertical.Maximum;
+        }
+
+        private void SaveButtonPressed(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void SaveAsButtonPressed(object sender, EventArgs e)
+        {
+            SaveAs();
+        }
+
+        private void UndoButtonPressed(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void RedoButtonPressed(object sender, EventArgs e)
+        {
+            Redo();
+        }
+
+        private void scrollBarHorizontal_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Horizontal scroll to {e.NewValue}.");
+            scrollX = e.NewValue;
+            UpdateScroll();
+        }
+
+        private void scrollBarVertical_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
+            scrollY = e.NewValue;
+            UpdateScroll();
         }
     }
 }
