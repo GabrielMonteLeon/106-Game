@@ -39,7 +39,7 @@ namespace MEDU
 
         //Assets
         private static Texture2D[] sprites;
-        private enum SpriteID { Pixel, CloudLeft, CloudMid, CloudRight }
+        private enum SpriteID { Pixel, CloudLeft, CloudMid, CloudRight, Flag }
 
         /// <summary>
         /// Creates a new level from specific data. 
@@ -57,12 +57,13 @@ namespace MEDU
             foreach (Platform platform in platforms)
                 platform.draw(spriteBatch, cameraOffset);
 
-            if (!debug)
-                return;
-            spriteBatch.Draw(sprites[0], new Rectangle(PlayerStartPos - cameraOffset.ToPoint(), new Point(TILESIZE)), Color.Red);
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
-            spriteBatch.Draw(sprites[0], screenSpaceEnd, Color.Blue);
+            spriteBatch.Draw(sprites[(int)SpriteID.Flag], screenSpaceEnd, Color.Red);
+
+            if (!debug)
+                return;
+            spriteBatch.Draw(sprites[0], new Rectangle(PlayerStartPos - cameraOffset.ToPoint(), new Point(TILESIZE)), Color.Blue);
         }
 
         public string GetData()
@@ -138,11 +139,12 @@ namespace MEDU
         /// </summary>
         public static void LoadAssets(ContentManager content)
         {
-            sprites = new Texture2D[4];
+            sprites = new Texture2D[5];
             sprites[(int)SpriteID.Pixel] = content.Load<Texture2D>("pixel");
             sprites[(int)SpriteID.CloudLeft] = content.Load<Texture2D>("CLEFT");
             sprites[(int)SpriteID.CloudMid] = content.Load<Texture2D>("CMID");
             sprites[(int)SpriteID.CloudRight] = content.Load<Texture2D>("CRIGHT");
+            sprites[(int)SpriteID.Flag] = content.Load<Texture2D>("pixel");
         }
     }
 }
