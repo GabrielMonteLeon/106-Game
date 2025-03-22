@@ -45,8 +45,6 @@ namespace MEDU
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, GraphicsDevice.Viewport.Height / 2 - 50, 100, 100);
             End = new Rectangle(Start.X,Start.Y, 100, 100); 
@@ -59,9 +57,6 @@ namespace MEDU
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
-
-
-            // TODO: use this.Content to load your game content here
             Level.LoadAssets(Content);
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
@@ -70,10 +65,11 @@ namespace MEDU
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            //mouse position + rectangle
+
+            //mouse position
             MouseState ms = Mouse.GetState();
 
-            //Basic finite for going through basic game
+            //Basic finite state machine for going through basic game
             switch (menuState)
             {
                 case (MenuState.Menu):
@@ -141,7 +137,6 @@ namespace MEDU
         /// <summary>
         /// Makes character dead if they run out of bounds
         /// </summary>
-        /// <param name="player"></param>
         private void CheckIfPlayerOutofBounds(Player player)
         {
             Rectangle position = player.Position;
