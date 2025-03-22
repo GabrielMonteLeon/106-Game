@@ -16,10 +16,24 @@ namespace MEDU
         private List<Platform> platforms;
         private Vector2 playerStartPos;
         private Rectangle endTrigger;
+        private int deathPlaneY;
 
+        /// <summary>
+        /// List of all platforms in the level.
+        /// </summary>
         public List<Platform> Platforms => platforms;
+        /// <summary>
+        /// Location where player spawns.
+        /// </summary>
         public Vector2 PlayerStartPos => playerStartPos;
+        /// <summary>
+        /// When the player reaches this area, the level ends.
+        /// </summary>
         public Rectangle EndTrigger => endTrigger;
+        /// <summary>
+        /// When the player goes below this point, they die.
+        /// </summary>
+        public int DeathPlaneY => deathPlaneY;
 
         public const int TILESIZE = 64;
 
@@ -30,11 +44,12 @@ namespace MEDU
         /// <summary>
         /// Creates a new level from specific data. 
         /// </summary>
-        public Level(List<Platform> platforms, Vector2 playerStartPos, Rectangle endTrigger)
+        public Level(List<Platform> platforms, Vector2 playerStartPos, Rectangle endTrigger, int deathPlaneY)
         {
             this.platforms = platforms;
             this.playerStartPos = playerStartPos;
             this.endTrigger = endTrigger;
+            this.deathPlaneY = deathPlaneY;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraOffset, bool debug = false)
@@ -115,7 +130,7 @@ namespace MEDU
                 System.Diagnostics.Debug.WriteLine("Warning: Start Pos not defined");
             if (endTrigger.X < 0)
                 System.Diagnostics.Debug.WriteLine("Warning: End Trigger not defined");
-            return new Level(platforms, startPos, endTrigger);
+            return new Level(platforms, startPos, endTrigger, height * TILESIZE);
         }
 
         /// <summary>

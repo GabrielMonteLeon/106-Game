@@ -84,7 +84,7 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.Level):
-                    PlayerOutofBounds(player);
+                    CheckIfPlayerOutofBounds(player);
                     cameraPosition = new Vector2(player.Position.X, player.Position.Y);
                     if (!player.isAlive)
                     {
@@ -143,14 +143,10 @@ namespace MEDU
         /// Makes character dead if they run out of bounds
         /// </summary>
         /// <param name="player"></param>
-        private void PlayerOutofBounds(Player player)
+        private void CheckIfPlayerOutofBounds(Player player)
         {
             Rectangle position = player.Position;
-            if((position.X + position.Width) < 0)
-            {
-                player.isAlive = false;
-            }
-            if((position.Y > GraphicsDevice.Viewport.Height))
+            if(position.Y > currentLevel.DeathPlaneY)
             {
                 player.isAlive = false;
             }
