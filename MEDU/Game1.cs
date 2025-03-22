@@ -28,6 +28,8 @@ namespace MEDU
         private Player player;
         private MenuState menuState;
         private Point cameraCenterOffset;
+        private MouseState prevMsState;
+
 
         //menu fields
         private Rectangle Start;
@@ -77,7 +79,7 @@ namespace MEDU
             switch (menuState)
             {
                 case (MenuState.Menu):
-                    if (Start.Contains(ms.Position) && ms.LeftButton == ButtonState.Pressed)
+                    if (Start.Contains(ms.Position) && singleLeftClick(ms))
                     {
                         GoToLevel(0);
                         menuState = MenuState.Level;
@@ -94,12 +96,13 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.LevelFailed):
-                    if (End.Contains(ms.Position) && ms.LeftButton == ButtonState.Pressed)
+                    if (End.Contains(ms.Position) && singleLeftClick(ms))
                     {
                         menuState = MenuState.Menu;
                     }
                     break;
             }
+            prevMsState = ms;
             base.Update(gameTime);
         }
 
@@ -228,6 +231,11 @@ namespace MEDU
                 }
             }
             player.Transform = playerRect;
+        }
+
+        public bool singleLeftClick(MouseState ms)
+        {
+            return ms.LeftButton == ButtonState.Pressed && prevMsState.LeftButton != ButtonState.Pressed;
         }
     }
 }
