@@ -11,14 +11,14 @@ namespace MEDU
 {
     enum SpriteState
     {
-        idle,
-        jump,
-        walk
+        Idle,
+        Jump,
+        Walk
     }
     internal class Player : GameObject
     {
         // fields
-        private Double animationTimer;
+        private double animationTimer;
         private bool alive;
 
         private bool facingRight;
@@ -26,18 +26,17 @@ namespace MEDU
         private KeyboardState prevKb;
 
         private Vector2 playerVelocity;
-        private float gravity;
-        private float jumpVelocity;
 
         // edit these to adjust speeds
-        private float initialJumpVelocity;
         private float playerspeedX;
+        private float initialJumpVelocity;
+        private float gravity;
 
 
         // properties
-        public bool isAlive { get => alive; set => alive = value; }
-        public Vector2 PlayerVelocity { get => playerVelocity; }
-        public float JumpVelocity { get => jumpVelocity; set => jumpVelocity = value; }
+        public bool IsAlive { get => alive; set => alive = value; }
+        public Vector2 PlayerVelocity { get => playerVelocity; set => playerVelocity = value; }
+        public bool IsOnGround { get; set; }
 
         // constructor
         public Player(Rectangle position, Texture2D texture) 
@@ -45,105 +44,77 @@ namespace MEDU
         {
             alive = true;
             facingRight = true;
-            spriteState = SpriteState.idle;
+            spriteState = SpriteState.Idle;
 
             playerVelocity = new Vector2(0, 0);
-            gravity = 9.81f;
-            jumpVelocity = 0;
 
             // edit these values to adjust speed
-            initialJumpVelocity = 10;
-            playerspeedX = 2;
+            playerspeedX = 600;
+            initialJumpVelocity = -900;
+            gravity = 2000;
         }
-        public override void update()
+
+        public void Reset(Point position)
+        {
+            this.Position = position;
+            alive = true;
+            facingRight = true;
+            playerVelocity = Vector2.Zero;
+        }
+
+        public override void update(GameTime gameTime)
         {
             KeyboardState kb = Keyboard.GetState();
-            UpdatePosition();
 
-            // player FSM
-            switch (spriteState)
+            if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
             {
-                case SpriteState.idle:
-                    // walk left
-                    if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
-                    {
-                        spriteState = SpriteState.walk;
-                        playerVelocity.X = -playerspeedX;
-                        facingRight = false;
-                    }
-                    // walk right
-                    if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
-                    {
-                        spriteState = SpriteState.walk;
-                        playerVelocity.X = playerspeedX;
-                        facingRight = true;
-                    }
-                    // jump (single press)
-                    if (kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
-                    {
-                        spriteState = SpriteState.jump;
-                        jumpVelocity = initialJumpVelocity;
-                    }
-                    break;
-
-                case SpriteState.jump:
-                    jumpVelocity -= gravity;
-                    playerVelocity.Y = jumpVelocity;
-
-                    // can still move in the air
-                    // left
-                    if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
-                    {
-                        playerVelocity.X = -playerspeedX; 
-                        facingRight = false;
-                    }
-                    // right
-                    if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
-                    {
-                        playerVelocity.X = -playerspeedX; 
-                        facingRight = true;
-                    }
-                    // no movement
-                    if (kb.IsKeyUp(Keys.A) && kb.IsKeyUp(Keys.Left) && kb.IsKeyUp(Keys.D) && kb.IsKeyUp(Keys.Right))
-                    {
-                        playerVelocity.X = 0;
-                    }
-
-                    // when player lands on the ground
-                    if (jumpVelocity <= -initialJumpVelocity)
-                    {
-                        spriteState = SpriteState.idle;
-                        jumpVelocity = 0;
-                    }
-                    break;
-
-                case SpriteState.walk:
-                    // idle
-                    if (kb.IsKeyUp(Keys.A) && kb.IsKeyUp(Keys.Left) && kb.IsKeyUp(Keys.D) && kb.IsKeyUp(Keys.Right))
-                    {
-                        spriteState = SpriteState.idle;
-                    }
-                    // jump (single press only)
-                    if (kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
-                    {
-                        spriteState = SpriteState.jump;
-                        jumpVelocity = initialJumpVelocity;
-                    }
-                    break;
+                playerVelocity.X = -playerspeedX;
+                facingRight = false;
+            }
+            else if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
+            {
+                playerVelocity.X = playerspeedX;
+                facingRight = true;
+            }
+            else
+            {
+                playerVelocity.X = 0;
             }
 
+            if(kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
+            {
+                if (IsOnGround)
+                {
+                    playerVelocity.Y = initialJumpVelocity;
+                    IsOnGround = false;
+                }
+            }
+
+            UpdatePosition((float)gameTime.ElapsedGameTime.TotalSeconds);
             // tracks kb state for next frame
             prevKb = kb;
+        }
+
+        public override void draw(SpriteBatch spriteBatch, Vector2 camPosition)
+        {
+            //determine sprite state
+            if (!IsOnGround)
+                spriteState = SpriteState.Jump;
+            else if (playerVelocity.X != 0)
+                spriteState = SpriteState.Walk;
+            else
+                spriteState = SpriteState.Idle;
+            base.draw(spriteBatch, camPosition);
         }
         /// <summary>
         /// updates player position based on velocity
         /// </summary>
-        public void UpdatePosition()
+        public void UpdatePosition(float deltaTime)
         {
-            Rectangle pos = Position;
-            pos.X += (int) playerVelocity.X;
-            pos.Y -= (int) playerVelocity.Y;
-            this.Position = pos;
+            Rectangle pos = Transform;
+            playerVelocity.Y += gravity * deltaTime;
+            pos.Location += (playerVelocity * deltaTime).ToPoint();
+            this.Transform = pos;
         }
     }
 }

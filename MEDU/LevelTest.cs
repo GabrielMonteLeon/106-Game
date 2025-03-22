@@ -24,7 +24,7 @@ namespace MEDU
         public static void LoadLevel(string filePath)
         {
             loadedLevel = Level.LoadLevelFromFile(filePath);
-            cameraPos = loadedLevel.PlayerStartPos;
+            cameraPos = loadedLevel.PlayerStartPos.ToVector2();
         }
 
         public static void Update(GameTime gameTime)

@@ -14,7 +14,7 @@ namespace MEDU
     {
         //fields
         private List<Platform> platforms;
-        private Vector2 playerStartPos;
+        private Point playerStartPos;
         private Rectangle endTrigger;
         private int deathPlaneY;
 
@@ -25,7 +25,7 @@ namespace MEDU
         /// <summary>
         /// Location where player spawns.
         /// </summary>
-        public Vector2 PlayerStartPos => playerStartPos;
+        public Point PlayerStartPos => playerStartPos;
         /// <summary>
         /// When the player reaches this area, the level ends.
         /// </summary>
@@ -44,7 +44,7 @@ namespace MEDU
         /// <summary>
         /// Creates a new level from specific data. 
         /// </summary>
-        public Level(List<Platform> platforms, Vector2 playerStartPos, Rectangle endTrigger, int deathPlaneY)
+        public Level(List<Platform> platforms, Point playerStartPos, Rectangle endTrigger, int deathPlaneY)
         {
             this.platforms = platforms;
             this.playerStartPos = playerStartPos;
@@ -59,7 +59,7 @@ namespace MEDU
 
             if (!debug)
                 return;
-            spriteBatch.Draw(sprites[0], new Rectangle((PlayerStartPos - cameraOffset).ToPoint(), new Point(TILESIZE)), Color.Red);
+            spriteBatch.Draw(sprites[0], new Rectangle(PlayerStartPos - cameraOffset.ToPoint(), new Point(TILESIZE)), Color.Red);
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
             spriteBatch.Draw(sprites[0], screenSpaceEnd, Color.Blue);
@@ -71,7 +71,7 @@ namespace MEDU
             data += $"{platforms.Count} total platforms:";
             foreach (Platform platform in platforms)
             {
-                data += $"\n  Platform at {platform.Position.Location} with size {platform.Position.Size}";
+                data += $"\n  Platform at {platform.Transform.Location} with size {platform.Transform.Size}";
             }
             data += $"\nPlayer Starting Pos: {playerStartPos}";
             data += $"\nEnd Trigger: {endTrigger}";
@@ -89,7 +89,7 @@ namespace MEDU
             reader.Close();
 
             List<Platform> platforms = new List<Platform>();
-            Vector2 startPos = new Vector2(-1, -1);
+            Point startPos = new Point(-1, -1);
             Rectangle endTrigger = new Rectangle(-1, -1, -1, -1);
 
             for (int y = 0; y < height; y++)
@@ -111,7 +111,7 @@ namespace MEDU
                             }
                             break;
                         case 2: //player start
-                            startPos = new Vector2(x * TILESIZE, y * TILESIZE);
+                            startPos = new Point(x * TILESIZE, y * TILESIZE);
                             break;
                         case 3: //platform
                             if (currentPlatformStart == -1)

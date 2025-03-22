@@ -28,7 +28,7 @@ namespace MEDU
 
         public override void draw(SpriteBatch spriteBatch, Vector2 camPosition)
         {
-            Rectangle screenPos = Position;
+            Rectangle screenPos = Transform;
             screenPos.Offset(-camPosition);
             //assuming platform is 1 unit tall and an integer number of units wide
             if (screenPos.Width == screenPos.Height)
