@@ -49,7 +49,7 @@ namespace MEDU
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, GraphicsDevice.Viewport.Height / 2 - 50, 100, 100);
             End = new Rectangle(Start.X,Start.Y, 100, 100); 
             menuState = MenuState.Menu;
-            player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("CLEFT"));
+            player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("TempAvatar"));
         }
 
         protected override void LoadContent()
