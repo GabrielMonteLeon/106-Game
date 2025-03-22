@@ -52,6 +52,8 @@ namespace MEDU
 
         public static void Draw(SpriteBatch spriteBatch)
         {
+            if (loadedLevel == null)
+                return;
             loadedLevel.Draw(spriteBatch, cameraPos, true);
         }
     }

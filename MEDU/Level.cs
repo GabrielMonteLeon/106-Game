@@ -21,11 +21,11 @@ namespace MEDU
         public Vector2 PlayerStartPos => playerStartPos;
         public Rectangle EndTrigger => endTrigger;
 
-        public const int TILESIZE = 100;
+        public const int TILESIZE = 64;
 
         //Assets
         private static Texture2D[] sprites;
-        private enum SpriteID { CloudLeft, CloudMid, CloudRight }
+        private enum SpriteID { Pixel, CloudLeft, CloudMid, CloudRight }
 
         /// <summary>
         /// Creates a new level from specific data. 
@@ -39,14 +39,22 @@ namespace MEDU
 
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraOffset, bool debug = false)
         {
+            foreach (Platform platform in platforms)
+                platform.draw(spriteBatch, cameraOffset);
 
+            if (!debug)
+                return;
+            spriteBatch.Draw(sprites[0], new Rectangle((PlayerStartPos - cameraOffset).ToPoint(), new Point(TILESIZE)), Color.Red);
+            Rectangle screenSpaceEnd = endTrigger;
+            screenSpaceEnd.Offset(-cameraOffset);
+            spriteBatch.Draw(sprites[0], screenSpaceEnd, Color.Blue);
         }
 
         public string GetData()
         {
             string data = "";
             data += $"{platforms.Count} total platforms:";
-            foreach(Platform platform in platforms)
+            foreach (Platform platform in platforms)
             {
                 data += $"\n  Platform at {platform.Position.Location} with size {platform.Position.Size}";
             }
@@ -73,13 +81,13 @@ namespace MEDU
             {
                 //all platforms are assumed to be 1 unit tall
                 int currentPlatformStart = -1;
-                for(int x = 0; x < width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     int dataIndex = x * height + y;
-                    switch(data[dataIndex])
+                    switch (data[dataIndex])
                     {
                         case 0: //nothing
-                            if(currentPlatformStart != -1)
+                            if (currentPlatformStart != -1)
                             {
                                 platforms.Add(new Platform(
                                     new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
@@ -95,7 +103,7 @@ namespace MEDU
                                 currentPlatformStart = x;
                             break;
                         case 4: //level end
-                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, 1, 1);
+                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
                             break;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
@@ -115,7 +123,8 @@ namespace MEDU
         /// </summary>
         public static void LoadAssets(ContentManager content)
         {
-            sprites = new Texture2D[3];
+            sprites = new Texture2D[4];
+            sprites[(int)SpriteID.Pixel] = content.Load<Texture2D>("pixel");
             sprites[(int)SpriteID.CloudLeft] = content.Load<Texture2D>("CLEFT");
             sprites[(int)SpriteID.CloudMid] = content.Load<Texture2D>("CMID");
             sprites[(int)SpriteID.CloudRight] = content.Load<Texture2D>("CRIGHT");

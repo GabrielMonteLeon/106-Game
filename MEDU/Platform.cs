@@ -28,7 +28,10 @@ namespace MEDU
 
         public override void draw(SpriteBatch spriteBatch, Vector2 camPosition)
         {
-            if(Position.Width == Position.Height)
+            Rectangle screenPos = Position;
+            screenPos.Offset(-camPosition);
+            //assuming platform is 1 unit tall and an integer number of units wide
+            if (screenPos.Width == screenPos.Height)
             {
                 //Render half of left and right textures
                 int textureSize = leftTexture.Width;
@@ -37,7 +40,7 @@ namespace MEDU
                 Rectangle rightSourceRect = leftSourceRect;
                 rightSourceRect.X += rightSourceRect.Width;
 
-                Rectangle leftDestRect = Position;
+                Rectangle leftDestRect = screenPos;
                 leftDestRect.Width /= 2;
                 Rectangle rightDestRect = leftDestRect;
                 rightDestRect.X += rightDestRect.Width;
@@ -46,10 +49,16 @@ namespace MEDU
             }
             else
             {
-                Rectangle destination = Position;
+                Rectangle destination = screenPos;
                 destination.Width = destination.Height;
                 spriteBatch.Draw(leftTexture, destination, Color.White);
-
+                destination.X += destination.Width;
+                for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
+                {
+                    spriteBatch.Draw(Texture, destination, Color.White);
+                    destination.X += destination.Width;
+                }
+                spriteBatch.Draw(rightTexture, destination, Color.White);
             }
         }
     }

@@ -43,8 +43,8 @@ namespace MEDU
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
             Level.LoadAssets(Content);
+            System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,6 +54,7 @@ namespace MEDU
 
             // TODO: Add your update logic here
 
+            LevelTest.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -62,7 +63,9 @@ namespace MEDU
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
+            _spriteBatch.Begin();
+            LevelTest.Draw(_spriteBatch);
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
 
