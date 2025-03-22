@@ -41,7 +41,9 @@ namespace MEDU
 
         public virtual void draw(SpriteBatch spriteBatch, Vector2 camPosition)
         {
-            spriteBatch.Draw(texture, new Vector2(position.X-camPosition.X, position.Y-camPosition.Y), position, Color.White);
+            Rectangle screenSpacePos = Position;
+            screenSpacePos.Offset(-camPosition);
+            spriteBatch.Draw(texture, screenSpacePos, Color.White);
         }
     }
 }
