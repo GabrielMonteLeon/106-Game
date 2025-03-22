@@ -13,18 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin pixel.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:pixel.png
-
 #begin CLEFT.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -61,8 +49,6 @@
 /processorParam:TextureFormat=Color
 /build:CRIGHT.png
 
-#begin test level.level
-/copy:test level.level
 #begin End.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -75,6 +61,18 @@
 /processorParam:TextureFormat=Color
 /build:End.png
 
+#begin pixel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:pixel.png
+
 #begin Start.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -86,4 +84,19 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Start.png
+
+#begin TempAvatar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:TempAvatar.png
+
+#begin test level.level
+/copy:test level.level
 
