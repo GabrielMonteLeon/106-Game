@@ -72,13 +72,12 @@ namespace MEDU
                 Exit();
             //mouse position + rectangle
             MouseState ms = Mouse.GetState();
-            Rectangle msr = new Rectangle(ms.X,ms.Y,1,1);   
 
             //Basic finite for going through basic game
             switch (menuState)
             {
                 case (MenuState.Menu):
-                    if (msr.Intersects(Start) && ms.LeftButton == ButtonState.Pressed)
+                    if (Start.Contains(ms.Position) && ms.LeftButton == ButtonState.Pressed)
                     {
                         menuState = MenuState.Level;
                     }
@@ -90,15 +89,15 @@ namespace MEDU
                     {
                         menuState = MenuState.LevelFailed;
                     }
+                    player.update();
                     break;
                 case (MenuState.LevelFailed):
-                    if (msr.Intersects(End) && ms.LeftButton == ButtonState.Pressed)
+                    if (End.Contains(ms.Position) && ms.LeftButton == ButtonState.Pressed)
                     {
                         menuState = MenuState.Menu;
                     }
                     break;
             }
-            player.update();
             base.Update(gameTime);
         }
 
