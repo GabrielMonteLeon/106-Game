@@ -92,6 +92,8 @@ namespace MEDU
                     {
                         menuState = MenuState.LevelFailed;
                     }
+                    if (player.Transform.Intersects(currentLevel.EndTrigger))
+                        menuState = MenuState.Menu;
                     break;
                 case (MenuState.LevelFailed):
                     if (End.Contains(ms.Position) && ms.LeftButton == ButtonState.Pressed)
