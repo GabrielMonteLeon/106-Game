@@ -157,9 +157,9 @@ namespace MEDU
         {
             sprites = new Texture2D[5];
             sprites[(int)SpriteID.Pixel] = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.CloudLeft] = content.Load<Texture2D>("CLEFT");
-            sprites[(int)SpriteID.CloudMid] = content.Load<Texture2D>("CMID");
-            sprites[(int)SpriteID.CloudRight] = content.Load<Texture2D>("CRIGHT");
+            sprites[(int)SpriteID.CloudLeft] = content.Load<Texture2D>("CloudLeft");
+            sprites[(int)SpriteID.CloudMid] = content.Load<Texture2D>("CloudMid");
+            sprites[(int)SpriteID.CloudRight] = content.Load<Texture2D>("CloudRight");
             sprites[(int)SpriteID.Flag] = content.Load<Texture2D>("pixel");
         }
     }
