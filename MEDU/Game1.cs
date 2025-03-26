@@ -197,39 +197,37 @@ namespace MEDU
                 //all platforms are currently passthrough, so this code is never run
                 else
                 {
-                    ////Resolve horizontally only if the overlap's width is less than its height
-                    ////if the overlap is a square, prioritize horizontal resolution
-                    //if (overlap.Width > overlap.Height || overlap.Width == 0)
-                    //    continue;
+                    //Resolve horizontally only if the overlap's width is less than its height
+                    //Resolve horizontally only if the overlap's width is less than its height
+                    //if the overlap is a square, prioritize horizontal resolution
+                    if (overlap.Width > overlap.Height || overlap.Width == 0)
+                    {
+                        //if to the left of the obstacle, move left. otherwise, move right
+                        if (playerRect.X < platform.Position.X)
+                            playerRect.X -= overlap.Width;
+                        else
+                            playerRect.X += overlap.Width;
+                    }
+                    player.Transform = playerRect;
+                    //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+                    if (player.Transform.Intersects(platform.Transform))
+                    {
+                        if (overlap.Height == 0)
+                            continue;
 
-                    ////if to the left of the obstacle, move left. otherwise, move right
-                    //if (playerRect.X < platform.Position.X)
-                    //    playerRect.X -= overlap.Width;
-                    //else
-                    //    playerRect.X += overlap.Width;
-
-                    //player.Position = playerRect;
-                    ////at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                    //if (player.Position.Intersects(platform.Position))
-                    //{
-                    //    if (overlap.Height == 0)
-                    //        continue;
-
-                    //    //if above the obstacle, move up. otherwise, move down
-                    //    if (playerRect.Y < platform.Position.Y)
-                    //    {
-                    //        if (platform.PassThrough)
-                    //            playerRect.Y += overlap.Height;
-                    //        else
-                    //            playerRect.Y -= overlap.Height;
-                    //    }
-                    //    else
-                    //        playerRect.Y += overlap.Height;
-
-
-                    //    player.JumpVelocity = 0;
-                    //    player.Position = playerRect;
-                    //}
+                        //if above the obstacle, move up. otherwise, move down
+                        if (playerRect.Y < platform.Position.Y)
+                        {
+                            if (platform.PassThrough)
+                                playerRect.Y += overlap.Height;
+                            else
+                                playerRect.Y -= overlap.Height;
+                        }
+                        else
+                            playerRect.Y += overlap.Height;
+                        player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                        player.Transform = playerRect;
+                    }
                 }
             }
             player.Transform = playerRect;
