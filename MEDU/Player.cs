@@ -75,6 +75,11 @@ namespace MEDU
             {
                 extraJumps=1;
             }
+            //relatively infinite jumps 
+            if (kb.IsKeyDown(Keys.O))
+            {
+                extraJumps = 10000000;
+            }
             if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
             {
                 playerVelocity.X = -playerspeedX;
