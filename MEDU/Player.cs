@@ -20,7 +20,8 @@ namespace MEDU
         // fields
         private double animationTimer;
         private bool alive;
-
+        private int extraJumps;
+        private int currentJumps;
         private bool facingRight;
         private SpriteState spriteState;
         private KeyboardState prevKb;
@@ -35,6 +36,8 @@ namespace MEDU
 
         // properties
         public bool IsAlive { get => alive; set => alive = value; }
+        public int ExtraJumps { get => extraJumps; set => extraJumps = value; }
+
         public Vector2 PlayerVelocity { get => playerVelocity; set => playerVelocity = value; }
         public bool IsOnGround { get; set; }
 
@@ -45,7 +48,8 @@ namespace MEDU
             alive = true;
             facingRight = true;
             spriteState = SpriteState.Idle;
-
+            extraJumps = 0;
+            currentJumps = 0;
             playerVelocity = new Vector2(0, 0);
 
             // edit these values to adjust speed
@@ -80,11 +84,18 @@ namespace MEDU
             {
                 playerVelocity.X = 0;
             }
-
+            if (IsOnGround)
+                currentJumps = 0;
             if(kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
             {
                 if (IsOnGround)
                 {
+                    playerVelocity.Y = initialJumpVelocity;
+                    IsOnGround = false;
+                }
+                else if (extraJumps>currentJumps)
+                {
+                    currentJumps++;
                     playerVelocity.Y = initialJumpVelocity;
                     IsOnGround = false;
                 }
