@@ -210,12 +210,14 @@ namespace MEDU
             Rectangle playerRect = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
             player.IsOnGround = false;
+            List<Rectangle> intersections = new List<Rectangle>();
+            Rectangle overlap;
             foreach (Platform platform in objects)
             {
                 if (!playerRect.Intersects(platform.Transform))
                     continue;
 
-                Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+                overlap = Rectangle.Intersect(platform.Transform, playerRect);
 
                 if (!platform.IsSafe)
                 {
@@ -241,43 +243,96 @@ namespace MEDU
                 //all platforms are currently passthrough, so this code is never run
                 else
                 {
-                    ////Resolve horizontally only if the overlap's width is less than its height
-                    ////if the overlap is a square, prioritize horizontal resolution
-                    //if (overlap.Width > overlap.Height || overlap.Width == 0)
-                    //    continue;
+                    intersections.Add(platform.Transform);
+                    //resolve horizontally
+                    foreach (Rectangle intersection in intersections)
+                    {
+                        overlap = Rectangle.Intersect(intersection, playerRect);
 
-                    ////if to the left of the obstacle, move left. otherwise, move right
-                    //if (playerRect.X < platform.Position.X)
-                    //    playerRect.X -= overlap.Width;
-                    //else
-                    //    playerRect.X += overlap.Width;
+                        //Resolve horizontally only if the overlap's width is less than its height
+                        //if the overlap is a square, prioritize horizontal resolution
+                        if (overlap.Width > overlap.Height || overlap.Width == 0)
+                            continue;
 
-                    //player.Position = playerRect;
-                    ////at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                    //if (player.Position.Intersects(platform.Position))
-                    //{
-                    //    if (overlap.Height == 0)
-                    //        continue;
+                        //if to the left of the obstacle, move left. otherwise, move right
+                        if (playerRect.X < intersection.X)
+                            playerRect.X -= overlap.Width;
+                        else
+                            playerRect.X += overlap.Width;
+                    }
 
-                    //    //if above the obstacle, move up. otherwise, move down
-                    //    if (playerRect.Y < platform.Position.Y)
-                    //    {
-                    //        if (platform.PassThrough)
-                    //            playerRect.Y += overlap.Height;
-                    //        else
-                    //            playerRect.Y -= overlap.Height;
-                    //    }
-                    //    else
-                    //        playerRect.Y += overlap.Height;
+                    //resolve vertically
+                    foreach (Rectangle intersection in intersections)
+                    {
+                        overlap = Rectangle.Intersect(intersection, playerRect);
 
+                        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+                        if (overlap.Height == 0)
+                            continue;
 
-                    //    player.JumpVelocity = 0;
-                    //    player.Position = playerRect;
-                    //}
+                        //if above the obstacle, move up. otherwise, move down
+                        if (playerRect.Y < intersection.Y)
+                        {
+                            //keep the player slightly inside the platform so future collision checks work correctly
+                            playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
+                            player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                            player.IsOnGround = true;
+                        }
+                        else
+                            playerRect.Y += overlap.Height;
+                        player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                    }
                 }
             }
             player.Transform = playerRect;
         }
+
+        //private void ResolveCollisions()
+        //{
+        //    Rectangle playerRect = GetPlayerRect();
+        //    //find all intersections
+        //    List<Rectangle> intersections = new List<Rectangle>();
+        //    foreach (Rectangle obstacle in obstacleRects)
+        //    {
+        //        if (playerRect.Intersects(obstacle))
+        //            intersections.Add(obstacle);
+        //    }
+
+            ////resolve horizontally
+            //foreach (Rectangle intersection in intersections)
+            //{
+            //    Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+            //    //Resolve horizontally only if the overlap's width is less than its height
+            //    //if the overlap is a square, prioritize horizontal resolution
+            //    if (overlap.Width > overlap.Height || overlap.Width == 0)
+            //        continue;
+
+            //    //if to the left of the obstacle, move left. otherwise, move right
+            //    if (playerRect.X<intersection.X)
+            //        playerRect.X -= overlap.Width;
+            //    else
+            //        playerRect.X += overlap.Width;
+            //}
+
+            //resolve vertically
+            //foreach (Rectangle intersection in intersections)
+            //{
+            //    Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+            //    //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+            //    if (overlap.Height == 0)
+            //        continue;
+
+            //    //if above the obstacle, move up. otherwise, move down
+            //    if (playerRect.Y<intersection.Y)
+            //        playerRect.Y -= overlap.Height;
+            //    else
+            //        playerRect.Y += overlap.Height;
+            //    playerVelocity.Y = 0;
+            //}
+        //    playerPosition = playerRect.Location.ToVector2();
+        //}
 
         public bool singleLeftClick(MouseState ms)
         {
