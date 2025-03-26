@@ -59,7 +59,7 @@ namespace MEDU
             End = new Rectangle(Start.X,Start.Y, 100, 100);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             menuState = MenuState.Menu;
-            player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("CharacterRight"));
+            player = new Player(new Rectangle(10,10,50,100), Content.Load<Texture2D>("CharacterRight"));
             select = new Rectangle(
                 _graphics.PreferredBackBufferWidth / 2 - 35,
                 _graphics.PreferredBackBufferHeight - 75,
