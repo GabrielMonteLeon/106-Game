@@ -69,9 +69,11 @@ namespace MEDU
         public override void update(GameTime gameTime)
         {
             KeyboardState kb = Keyboard.GetState();
+            
+            //DOUBLE JUMP TESTER REMOVE IN FINAL VERSION
             if (kb.IsKeyDown(Keys.J))
             {
-                extraJumps++;
+                extraJumps=1;
             }
             if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
             {
