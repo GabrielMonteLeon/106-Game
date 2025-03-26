@@ -10,6 +10,7 @@ namespace MEDU
     enum MenuState
     {
         Menu,
+        LevelSelect,
         Level,
         LevelFailed,
         LevelComplete,
@@ -39,6 +40,10 @@ namespace MEDU
         private Texture2D end_texture;
         private MouseState pms;
 
+        //level select fields
+        private Rectangle[] levelSelection;
+        private Texture2D[] levelSelectTextures;
+        private Rectangle select;
 
         public Game1()
         {
@@ -55,6 +60,11 @@ namespace MEDU
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             menuState = MenuState.Menu;
             player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("TempAvatar"));
+            select = new Rectangle(
+                _graphics.PreferredBackBufferWidth / 2 - 25,
+                _graphics.PreferredBackBufferHeight - 75,
+                50,
+                50);
         }
 
         protected override void LoadContent()
@@ -64,6 +74,19 @@ namespace MEDU
             end_texture = Content.Load<Texture2D>("End");
             Level.LoadAssets(Content);
             levels = new Level[] { Level.LoadLevelFromFile("Content/test level.level") };
+            levelSelection = new Rectangle[levels.Length];
+            levelSelectTextures = new Texture2D[levels.Length];
+            for (int i = 0; i < levelSelection.Length; i++)
+            {
+                levelSelection[i] = new Rectangle(
+                    i * _graphics.PreferredBackBufferWidth / levelSelection.Length,
+                    0,
+                    _graphics.PreferredBackBufferWidth / levelSelection.Length,
+                    _graphics.PreferredBackBufferHeight - 100);
+                // TODO: replace texture with something that depicts the level
+                levelSelectTextures[i] = Content.Load<Texture2D>("Start");
+            }
+            
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
 
@@ -81,7 +104,21 @@ namespace MEDU
                 case (MenuState.Menu):
                     if (Start.Contains(ms.Position) && singleLeftClick(ms))
                     {
-                        GoToLevel(0);
+                        menuState = MenuState.LevelSelect;
+                    }
+                    break;
+                case (MenuState.LevelSelect):
+                    int selectedLevel = 0;
+                    for (int i = 0; i < levelSelection.Length; i++)
+                    {
+                        if (levelSelection[i].Contains(ms.Position) && singleLeftClick(ms))
+                        {
+                            selectedLevel = i;
+                        }
+                    }
+                    if (select.Contains(ms.Position) && singleLeftClick(ms))
+                    {
+                        GoToLevel(selectedLevel);
                         menuState = MenuState.Level;
                     }
                     break;
@@ -118,6 +155,13 @@ namespace MEDU
             {
                 case (MenuState.Menu):
                     _spriteBatch.Draw(start_texture,Start, Color.White);
+                    break;
+                case (MenuState.LevelSelect):
+                    for (int i = 0; i < levelSelection.Length; i++)
+                    {
+                        _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], Color.White);
+                    }
+                    _spriteBatch.Draw(start_texture, select, Color.White);
                     break;
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
