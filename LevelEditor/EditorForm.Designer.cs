@@ -124,7 +124,7 @@
             // 
             // pColor2
             // 
-            pColor2.BackColor = Color.FromArgb(0, 200, 0);
+            pColor2.BackColor = Color.FromArgb(192, 0, 0);
             pColor2.FlatStyle = FlatStyle.Flat;
             pColor2.Location = new Point(47, 22);
             pColor2.Name = "pColor2";
