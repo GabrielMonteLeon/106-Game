@@ -79,7 +79,6 @@
             }
 
             tileMapData = new int[width, height];
-            tileMapVisuals = new PictureBox[width, height];
             SelectColor(0);
             currentFile = "";
             undoQueue = new LinkedList<ActionData>();
@@ -88,15 +87,16 @@
 
             //calculate tile/map sizes
             tileSize = 32;
-            int mapHeight = tileSize * height;
-            int mapWidth = tileSize * width;
+            int visibleTilesX = mapPanel.Width / tileSize;
+            int visibleTilesY = mapPanel.Height / tileSize;
+            tileMapVisuals = new PictureBox[visibleTilesX, visibleTilesY];
             //adjust scroll bars based on map size
             AdjustScrollBars();
 
             //Create map picture boxes;
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < visibleTilesX; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < visibleTilesY; y++)
                 {
                     PictureBox tile = new PictureBox();
                     tileMapVisuals[x, y] = tile;
@@ -296,19 +296,25 @@
             return true;
         }
 
-        private void OnTileClick(PictureBox sender, int x, int y)
+        private void OnTileClick(PictureBox sender, int visualX, int visualY)
         {
             //make sure the most recent paint action was recorded
             RecordCurrentAction(null!, null!);
 
             sender.Capture = false;
-            PaintTile(x, y);
+            int trueX = visualX + scrollX;
+            int trueY = visualY + scrollY;
+            PaintTile(trueX, trueY);
         }
 
-        private void OnTileMouseEnter(int x, int y)
+        private void OnTileMouseEnter(int visualX, int visualY)
         {
             if (MouseButtons != 0)
-                PaintTile(x, y);
+            {
+                int trueX = visualX + scrollX;
+                int trueY = visualY + scrollY;
+                PaintTile(trueX, trueY);
+            }
             else
                 //make sure the most recent paint action was recorded if the mouse was up
                 RecordCurrentAction(null!, null!);
@@ -333,7 +339,7 @@
 
         private void SelectColor(int colorIndex)
         {
-            for(int i = 0; i < paletteButtons.Length; i++)
+            for (int i = 0; i < paletteButtons.Length; i++)
             {
                 if (i != colorIndex)
                     paletteButtons[i].FlatStyle = FlatStyle.Flat;
@@ -371,7 +377,12 @@
             }
 
             tileMapData[x, y] = colorIndex;
-            tileMapVisuals[x, y].BackColor = colorPalette[colorIndex];
+
+            int visualX = x - scrollX;
+            int visualY = y - scrollY;
+            if (visualX < 0 || visualX >= tileMapVisuals.GetLength(0) || visualY < 0 || visualY >= tileMapVisuals.GetLength(1))
+                return;
+            tileMapVisuals[visualX, visualY].BackColor = colorPalette[colorIndex];
         }
 
         /// <summary>
@@ -488,11 +499,11 @@
 
         private void UpdateScroll()
         {
-            for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+            for (int x = 0; x < tileMapVisuals.GetLength(0); x++)
             {
-                for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                for (int y = 0; y < tileMapVisuals.GetLength(1); y++)
                 {
-                    tileMapVisuals[x, y].Location = new Point((x - scrollX) * tileSize, (y - scrollY) * tileSize);
+                    tileMapVisuals[x, y].BackColor = colorPalette[tileMapData[x+scrollX, y+scrollY]];
                 }
             }
         }
@@ -505,8 +516,8 @@
             //Set scroll bar sizes
             scrollBarHorizontal.LargeChange = visibleTilesX;
             scrollBarVertical.LargeChange = visibleTilesY;
-            scrollBarHorizontal.Maximum = tileMapData.GetLength(0);
-            scrollBarVertical.Maximum = tileMapData.GetLength(1);
+            scrollBarHorizontal.Maximum = tileMapData.GetLength(0) - 1;
+            scrollBarVertical.Maximum = tileMapData.GetLength(1) - 1;
             //Enable/Disable scroll bars
             scrollBarHorizontal.Enabled = scrollBarHorizontal.LargeChange < scrollBarHorizontal.Maximum;
             scrollBarVertical.Enabled = scrollBarVertical.LargeChange < scrollBarVertical.Maximum;
@@ -544,6 +555,16 @@
             System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
             scrollY = e.NewValue;
             UpdateScroll();
+        }
+
+        private void resizeGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Grid Resize not yet implemented.");
+        }
+
+        private void AdjustZoom(object sender, EventArgs e)
+        {
+            MessageBox.Show("Zoom not yet implemented.");
         }
     }
 }

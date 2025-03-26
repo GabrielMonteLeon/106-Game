@@ -83,18 +83,18 @@
             label2.AutoSize = true;
             label2.Location = new Point(10, 76);
             label2.Name = "label2";
-            label2.Size = new Size(108, 15);
+            label2.Size = new Size(68, 15);
             label2.TabIndex = 2;
-            label2.Text = "Grid Height (10-30)";
+            label2.Text = "Grid Height";
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Location = new Point(10, 50);
             label1.Name = "label1";
-            label1.Size = new Size(104, 15);
+            label1.Size = new Size(64, 15);
             label1.TabIndex = 1;
-            label1.Text = "Grid Width (10-30)";
+            label1.Text = "Grid Width";
             // 
             // loadButton
             // 
