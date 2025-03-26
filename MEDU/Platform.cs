@@ -44,8 +44,16 @@ namespace MEDU
                 leftDestRect.Width /= 2;
                 Rectangle rightDestRect = leftDestRect;
                 rightDestRect.X += rightDestRect.Width;
-                spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.White);
-                spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.White);
+                if (isSafe)
+                {
+                    spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.White);
+                    spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.Red);
+                    spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.Red);
+                }
             }
             else
             {
