@@ -69,7 +69,10 @@ namespace MEDU
         public override void update(GameTime gameTime)
         {
             KeyboardState kb = Keyboard.GetState();
-
+            if (kb.IsKeyDown(Keys.J))
+            {
+                extraJumps++;
+            }
             if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
             {
                 playerVelocity.X = -playerspeedX;
