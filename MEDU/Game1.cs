@@ -61,10 +61,10 @@ namespace MEDU
             menuState = MenuState.Menu;
             player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("CloudLeft"));
             select = new Rectangle(
-                _graphics.PreferredBackBufferWidth / 2 - 25,
+                _graphics.PreferredBackBufferWidth / 2 - 35,
                 _graphics.PreferredBackBufferHeight - 75,
-                50,
-                50);
+                70,
+                70);
         }
 
         protected override void LoadContent()
@@ -79,12 +79,12 @@ namespace MEDU
             for (int i = 0; i < levelSelection.Length; i++)
             {
                 levelSelection[i] = new Rectangle(
-                    i * _graphics.PreferredBackBufferWidth / levelSelection.Length,
-                    0,
-                    _graphics.PreferredBackBufferWidth / levelSelection.Length,
+                    i * _graphics.PreferredBackBufferWidth / levelSelection.Length + 25,
+                    10,
+                    _graphics.PreferredBackBufferWidth / levelSelection.Length - 50,
                     _graphics.PreferredBackBufferHeight - 100);
                 // TODO: replace texture with something that depicts the level
-                levelSelectTextures[i] = Content.Load<Texture2D>("Start");
+                levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
             }
             
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
@@ -137,7 +137,7 @@ namespace MEDU
                 case (MenuState.LevelFailed):
                     if (End.Contains(ms.Position) && singleLeftClick(ms))
                     {
-                        menuState = MenuState.Menu;
+                        menuState = MenuState.LevelSelect;
                     }
                     break;
             }

@@ -97,6 +97,7 @@ namespace MEDU
             {
                 //all platforms are assumed to be 1 unit tall
                 int currentPlatformStart = -1;
+                bool isSolid = false;
                 for (int x = 0; x < width; x++)
                 {
                     int dataIndex = x * height + y;
@@ -105,10 +106,20 @@ namespace MEDU
                         case 0: //nothing
                             if (currentPlatformStart != -1)
                             {
-                                platforms.Add(new Platform(
+                                if (!isSolid)
+                                {
+                                    platforms.Add(new Platform(
                                     new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
                                     sprites[(int)SpriteID.CloudMid], sprites[(int)SpriteID.CloudLeft], sprites[(int)SpriteID.CloudRight], true, true));
-                                currentPlatformStart = -1;
+                                }
+                                else
+                                {
+                                    platforms.Add(new Platform(
+                                    new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
+                                   sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], false, true));
+                                }
+                                    currentPlatformStart = -1;
+                                isSolid = false;
                             }
                             break;
                         case 2: //player start
@@ -120,6 +131,11 @@ namespace MEDU
                             break;
                         case 4: //level end
                             endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
+                            break;
+                        case 5: //solid platform
+                            if (currentPlatformStart == -1)
+                                currentPlatformStart = x;
+                            isSolid = true;
                             break;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
