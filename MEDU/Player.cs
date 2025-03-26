@@ -54,8 +54,8 @@ namespace MEDU
 
             // edit these values to adjust speed
             playerspeedX = 600;
-            initialJumpVelocity = -900;
-            gravity = 2000;
+            initialJumpVelocity = -1200;
+            gravity = 2500;
         }
 
         public void Reset(Point position)
