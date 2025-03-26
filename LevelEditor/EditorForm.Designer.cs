@@ -48,6 +48,16 @@
             editToolStripMenuItem = new ToolStripMenuItem();
             undoButton = new ToolStripMenuItem();
             redoButton = new ToolStripMenuItem();
+            resizeGridToolStripMenuItem = new ToolStripMenuItem();
+            viewToolStripMenuItem = new ToolStripMenuItem();
+            zoomToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
+            toolStripMenuItem5 = new ToolStripMenuItem();
+            toolStripMenuItem6 = new ToolStripMenuItem();
+            toolStripMenuItem7 = new ToolStripMenuItem();
+            toolStripMenuItem8 = new ToolStripMenuItem();
             palletteGroup.SuspendLayout();
             mapBox.SuspendLayout();
             menuStrip1.SuspendLayout();
@@ -114,7 +124,7 @@
             // 
             // pColor2
             // 
-            pColor2.BackColor = Color.FromArgb(0, 200, 0);
+            pColor2.BackColor = Color.FromArgb(192, 0, 0);
             pColor2.FlatStyle = FlatStyle.Flat;
             pColor2.Location = new Point(47, 22);
             pColor2.Name = "pColor2";
@@ -177,7 +187,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(559, 24);
@@ -222,7 +232,7 @@
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoButton, redoButton });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoButton, redoButton, resizeGridToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.Size = new Size(39, 20);
             editToolStripMenuItem.Text = "Edit";
@@ -242,6 +252,76 @@
             redoButton.Size = new Size(144, 22);
             redoButton.Text = "Redo";
             redoButton.Click += RedoButtonPressed;
+            // 
+            // resizeGridToolStripMenuItem
+            // 
+            resizeGridToolStripMenuItem.Name = "resizeGridToolStripMenuItem";
+            resizeGridToolStripMenuItem.Size = new Size(144, 22);
+            resizeGridToolStripMenuItem.Text = "Resize Grid";
+            resizeGridToolStripMenuItem.Click += resizeGridToolStripMenuItem_Click;
+            // 
+            // viewToolStripMenuItem
+            // 
+            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { zoomToolStripMenuItem });
+            viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            viewToolStripMenuItem.Size = new Size(44, 20);
+            viewToolStripMenuItem.Text = "View";
+            // 
+            // zoomToolStripMenuItem
+            // 
+            zoomToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, toolStripMenuItem5, toolStripMenuItem6, toolStripMenuItem7, toolStripMenuItem8 });
+            zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
+            zoomToolStripMenuItem.Size = new Size(180, 22);
+            zoomToolStripMenuItem.Text = "Zoom";
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(180, 22);
+            toolStripMenuItem2.Text = "25%";
+            toolStripMenuItem2.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(180, 22);
+            toolStripMenuItem3.Text = "37.5%";
+            toolStripMenuItem3.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(180, 22);
+            toolStripMenuItem4.Text = "50%";
+            toolStripMenuItem4.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(180, 22);
+            toolStripMenuItem5.Text = "75%";
+            toolStripMenuItem5.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new Size(180, 22);
+            toolStripMenuItem6.Text = "100%";
+            toolStripMenuItem6.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new Size(180, 22);
+            toolStripMenuItem7.Text = "150%";
+            toolStripMenuItem7.Click += AdjustZoom;
+            // 
+            // toolStripMenuItem8
+            // 
+            toolStripMenuItem8.Name = "toolStripMenuItem8";
+            toolStripMenuItem8.Size = new Size(180, 22);
+            toolStripMenuItem8.Text = "200%";
+            toolStripMenuItem8.Click += AdjustZoom;
             // 
             // EditorForm
             // 
@@ -288,5 +368,15 @@
         private HScrollBar scrollBarHorizontal;
         private VScrollBar scrollBarVertical;
         private Panel mapPanel;
+        private ToolStripMenuItem resizeGridToolStripMenuItem;
+        private ToolStripMenuItem viewToolStripMenuItem;
+        private ToolStripMenuItem zoomToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripMenuItem toolStripMenuItem5;
+        private ToolStripMenuItem toolStripMenuItem6;
+        private ToolStripMenuItem toolStripMenuItem7;
+        private ToolStripMenuItem toolStripMenuItem8;
     }
 }

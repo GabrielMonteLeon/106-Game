@@ -59,7 +59,7 @@ namespace MEDU
 
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
-            spriteBatch.Draw(sprites[(int)SpriteID.Flag], screenSpaceEnd, Color.Red);
+            spriteBatch.Draw(sprites[(int)SpriteID.Flag], screenSpaceEnd, Color.Green);
 
             if (!debug)
                 return;
@@ -98,6 +98,7 @@ namespace MEDU
                 //all platforms are assumed to be 1 unit tall
                 int currentPlatformStart = -1;
                 bool isSolid = false;
+                bool isSafe = true;
                 for (int x = 0; x < width; x++)
                 {
                     int dataIndex = x * height + y;
@@ -106,20 +107,27 @@ namespace MEDU
                         case 0: //nothing
                             if (currentPlatformStart != -1)
                             {
-                                if (!isSolid)
+                                if (!isSolid && isSafe)
                                 {
                                     platforms.Add(new Platform(
                                     new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
                                     sprites[(int)SpriteID.CloudMid], sprites[(int)SpriteID.CloudLeft], sprites[(int)SpriteID.CloudRight], true, true));
                                 }
-                                else
+                                else if (isSafe)
                                 {
                                     platforms.Add(new Platform(
                                     new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
                                    sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], false, true));
                                 }
-                                    currentPlatformStart = -1;
+                                else
+                                {
+                                   platforms.Add(new Platform(
+                                   new Rectangle(currentPlatformStart * TILESIZE, y * TILESIZE, (x - currentPlatformStart) * TILESIZE, TILESIZE),
+                                   sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], sprites[(int)SpriteID.Flag], false, false));
+                                }
+                                currentPlatformStart = -1;
                                 isSolid = false;
+                                isSafe = true;
                             }
                             break;
                         case 2: //player start
@@ -129,14 +137,20 @@ namespace MEDU
                             if (currentPlatformStart == -1)
                                 currentPlatformStart = x;
                             break;
-                        case 4: //level end
-                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
+                        case 1: //dangerous platform 
+                            if (currentPlatformStart == -1)
+                                currentPlatformStart = x;
+                            isSafe = false;
                             break;
                         case 5: //solid platform
                             if (currentPlatformStart == -1)
                                 currentPlatformStart = x;
                             isSolid = true;
                             break;
+                        case 4: //level end
+                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
+                            break;
+                        
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
                             break;

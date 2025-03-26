@@ -51,14 +51,28 @@ namespace MEDU
             {
                 Rectangle destination = screenPos;
                 destination.Width = destination.Height;
-                spriteBatch.Draw(leftTexture, destination, Color.White);
-                destination.X += destination.Width;
-                for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
+                if (isSafe)
                 {
-                    spriteBatch.Draw(Texture, destination, Color.White);
+                    spriteBatch.Draw(leftTexture, destination, Color.White);
                     destination.X += destination.Width;
+                    for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
+                    {
+                        spriteBatch.Draw(Texture, destination, Color.White);
+                        destination.X += destination.Width;
+                    }
+                    spriteBatch.Draw(rightTexture, destination, Color.White);
                 }
-                spriteBatch.Draw(rightTexture, destination, Color.White);
+                else
+                {
+                    spriteBatch.Draw(leftTexture, destination, Color.Red);
+                    destination.X += destination.Width;
+                    for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
+                    {
+                        spriteBatch.Draw(Texture, destination, Color.Red);
+                        destination.X += destination.Width;
+                    }
+                    spriteBatch.Draw(rightTexture, destination, Color.Red);
+                }
             }
         }
     }
