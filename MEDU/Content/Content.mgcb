@@ -97,6 +97,9 @@
 /processorParam:TextureFormat=Color
 /build:End.png
 
+#begin Main Level.level
+/copy:Main Level.level
+
 #begin pixel.png
 /importer:TextureImporter
 /processor:TextureProcessor

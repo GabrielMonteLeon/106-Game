@@ -95,6 +95,9 @@ namespace MEDU
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            //LevelTest.Update(gameTime);
+            //return;
+
             //mouse position
             MouseState ms = Mouse.GetState();
 
@@ -148,6 +151,9 @@ namespace MEDU
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            //LevelTest.Draw(_spriteBatch);
+            //return;
 
             _spriteBatch.Begin();
             //temporary menu demo draws
