@@ -129,7 +129,7 @@ namespace MEDU
                     player.update(gameTime);
                     HandleCollision();
                     CheckIfPlayerOutofBounds(player);
-                    cameraPosition = (player.Transform.Location - cameraCenterOffset).ToVector2();
+                    cameraPosition = (player.Transform.Center - cameraCenterOffset).ToVector2();
                     if (!player.IsAlive)
                     {
                         menuState = MenuState.LevelFailed;
