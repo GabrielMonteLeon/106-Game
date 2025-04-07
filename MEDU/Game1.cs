@@ -216,29 +216,77 @@ namespace MEDU
             Rectangle playerRect = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
             player.IsOnGround = false;
-            List<Rectangle> intersections = new List<Rectangle>();
-            Rectangle overlap;
+            List<Platform> intersections = new List<Platform>();
             foreach (Platform platform in objects)
             {
+                //Ignore platforms not being collided with
                 if (!playerRect.Intersects(platform.Transform))
                     continue;
 
-                overlap = Rectangle.Intersect(platform.Transform, playerRect);
-
+                //If the platform is deadly, kill the player. Any further collisions are irrelevant.
                 if (!platform.IsSafe)
                 {
                     //implement code for player dying
                     player.IsAlive = false;
+                    return;
                 }
 
-                //for pass-through platforms, only make sure the player doesn't fall through the top of it
+                //Record the intersection to process it later.
+                intersections.Add(platform);
+            }
+
+            //resolve horizontally first
+            for(int i = intersections.Count - 1; i >= 0; i--)
+            {
+                Platform platform = intersections[i];
+                //pass-through platforms have no horizontal collision
+                if (platform.PassThrough)
+                    continue;
+
+                //all platforms are currently passthrough, so this code is never run
+                else
+                {
+                    Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+
+                    //if there's no overlap there's no more intersection!
+                    //(this would be pretty common for horizontal collisions since each row of tiles have their own collision box)
+                    if (overlap.Width == 0)
+                    {
+                        intersections.RemoveAt(i);
+                        continue;
+                    }
+
+                    //Resolve horizontally only if the overlap's width is less than its height
+                    //if the overlap is a square, prioritize horizontal resolution
+                    if (overlap.Width > overlap.Height)
+                        continue;
+
+                    //if to the left of the obstacle, move left. otherwise, move right
+                    if (playerRect.X < platform.Transform.X)
+                        playerRect.X -= overlap.Width;
+                    else
+                        playerRect.X += overlap.Width;
+
+                    intersections.RemoveAt(i);
+                }
+            }
+
+            //resolve vertically
+            for (int i = intersections.Count - 1; i >= 0; i--)
+            {
+                Platform platform = intersections[i];
+                Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+
+                if (overlap.Height == 0)
+                    continue;
+
                 if (platform.PassThrough)
                 {
-                    //if not falling downwards, don't worry about collision
+                    //ignore pass-through collision when moving up
                     if (player.PlayerVelocity.Y < 0)
-                        break;
-                    //only collide if player's center is above the platform
-                    else if (playerRect.Center.Y < platform.Transform.Top)
+                        continue;
+                    //collide if the player is almost above the platform
+                    if (overlap.Bottom < platform.Transform.Center.Y)
                     {
                         //keep the player slightly inside the platform so future collision checks work correctly
                         playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
@@ -246,50 +294,33 @@ namespace MEDU
                         player.IsOnGround = true;
                     }
                 }
-                //all platforms are currently passthrough, so this code is never run
+
                 else
                 {
-                    intersections.Add(platform.Transform);
-                    //resolve horizontally
-                    foreach (Rectangle intersection in intersections)
+                    //if above the obstacle, move up. otherwise, move down
+                    if (playerRect.Y < platform.Transform.Y)
                     {
-                        overlap = Rectangle.Intersect(intersection, playerRect);
+                        //keep the player slightly inside the platform so future collision checks work correctly
+                        playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
 
-                        //Resolve horizontally only if the overlap's width is less than its height
-                        //if the overlap is a square, prioritize horizontal resolution
-                        if (overlap.Width > overlap.Height || overlap.Width == 0)
-                            continue;
-
-                        //if to the left of the obstacle, move left. otherwise, move right
-                        if (playerRect.X < intersection.X)
-                            playerRect.X -= overlap.Width;
-                        else
-                            playerRect.X += overlap.Width;
-                    }
-
-                    //resolve vertically
-                    foreach (Rectangle intersection in intersections)
-                    {
-                        overlap = Rectangle.Intersect(intersection, playerRect);
-
-                        //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                        if (overlap.Height == 0)
-                            continue;
-
-                        //if above the obstacle, move up. otherwise, move down
-                        if (playerRect.Y < intersection.Y)
+                        //only hit the floor if moving down (or staying still)
+                        if (player.PlayerVelocity.Y >= 0)
                         {
-                            //keep the player slightly inside the platform so future collision checks work correctly
-                            playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
                             player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
                             player.IsOnGround = true;
                         }
-                        else
-                            playerRect.Y += overlap.Height;
-                        player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                    }
+                    else
+                    {
+                        playerRect.Y += overlap.Height;
+
+                        //only hit the ceiling if moving up (or staying still)
+                        if(player.PlayerVelocity.Y <= 0)
+                            player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
                     }
                 }
             }
+
             player.Transform = playerRect;
         }
 
