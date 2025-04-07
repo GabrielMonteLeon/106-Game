@@ -111,8 +111,11 @@ namespace MEDU
                                 currentPlatformType = -1;
                             }
                             break;
-                        case 2: //player start
+                        case 4: //player start
                             startPos = new Point(x * TILESIZE, y * TILESIZE);
+                            break;
+                        case 2: //level end
+                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
                             break;
                         case 3: //passthrough platform
                             if (currentPlatformStart == -1) //if a platform is not yet being constructed
@@ -152,9 +155,6 @@ namespace MEDU
                                 currentPlatformStart = x;
                                 currentPlatformType = 2;
                             }
-                            break;
-                        case 4: //level end
-                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
                             break;
                         
                         default:

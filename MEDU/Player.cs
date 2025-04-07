@@ -60,6 +60,7 @@ namespace MEDU
 
         public void Reset(Point position)
         {
+            position.Y -= Transform.Height;
             this.Position = position;
             alive = true;
             facingRight = true;
