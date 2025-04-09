@@ -86,7 +86,7 @@ namespace MEDU
                 extraJumps=1;
             }
             //Wall Jump Tester
-            if (kb.IsKeyDown(Keys.P))
+            if (kb.IsKeyDown(Keys.L))
             {
                 extraWallJumps = 1;
             }
