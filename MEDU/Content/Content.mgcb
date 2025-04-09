@@ -148,7 +148,7 @@
 /processorParam:TextureFormat=Color
 /build:pixel.png
 
-#begin SolidBottom.png
+#begin SolidBottomLeft.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -158,9 +158,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:SolidBottom.png
+/build:SolidBottomLeft.png
 
-#begin SolidClear.png
+#begin SolidBottomRight.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -170,7 +170,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:SolidClear.png
+/build:SolidBottomRight.png
 
 #begin SolidCorner.png
 /importer:TextureImporter
@@ -196,18 +196,6 @@
 /processorParam:TextureFormat=Color
 /build:SolidLeft.png
 
-#begin SolidLeftBorder.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SolidLeftBorder.png
-
 #begin SolidMid.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -231,30 +219,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:SolidRight.png
-
-#begin SolidRightBorder.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SolidRightBorder.png
-
-#begin SolidTop.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SolidTop.png
 
 #begin SolidVert.png
 /importer:TextureImporter
