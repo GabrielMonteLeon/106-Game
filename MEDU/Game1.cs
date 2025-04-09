@@ -134,11 +134,15 @@ namespace MEDU
                     CheckIfPlayerOutofBounds(player);
                     cameraPosition = (player.Transform.Center - cameraCenterOffset).ToVector2();
                     if (!player.IsAlive)
-                    {
                         menuState = MenuState.LevelFailed;
-                    }
                     if (player.Transform.Intersects(currentLevel.EndTrigger))
                         menuState = MenuState.LevelComplete;
+                    if (Keyboard.GetState().IsKeyDown(Keys.P))
+                        menuState = MenuState.Pause;
+                    break;
+                case (MenuState.Pause):
+                    if (Keyboard.GetState().IsKeyDown(Keys.R))
+                        menuState = MenuState.Level; 
                     break;
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
@@ -182,6 +186,9 @@ namespace MEDU
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     player.draw(_spriteBatch, cameraPosition);
+                    break;
+                case (MenuState.Pause):
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(230, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     break;
                 case (MenuState.LevelComplete):
                     _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
