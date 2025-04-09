@@ -34,6 +34,10 @@ namespace MEDU
         /// When the player goes below this point, they die.
         /// </summary>
         public int DeathPlaneY => deathPlaneY;
+        /// <summary>
+        /// if player has already completed this level, return true, false otherwise
+        /// </summary>
+        public bool Completed { get; set; }
 
         public const int TILESIZE = 32;
 
