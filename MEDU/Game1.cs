@@ -81,6 +81,7 @@ namespace MEDU
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
             {
+                levels[i].Completed = false;
                 levelSelection[i] = new Rectangle(
                     i * _graphics.PreferredBackBufferWidth / levelSelection.Length + 25,
                     70,
@@ -136,7 +137,10 @@ namespace MEDU
                     if (!player.IsAlive)
                         menuState = MenuState.LevelFailed;
                     if (player.Transform.Intersects(currentLevel.EndTrigger))
+                    {
+                        currentLevel.Completed = true;
                         menuState = MenuState.LevelComplete;
+                    }
                     if (Keyboard.GetState().IsKeyDown(Keys.P))
                         menuState = MenuState.Pause;
                     break;
@@ -179,7 +183,10 @@ namespace MEDU
                     _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
-                        _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], Color.White);
+                        Color color = Color.White;
+                        if (levels[i].Completed)
+                            color = Color.Gray;
+                        _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], color);
                     }
                     _spriteBatch.Draw(start_texture, select, Color.White);
                     break;
