@@ -22,6 +22,8 @@ namespace MEDU
         private bool alive;
         private int extraJumps;
         private int currentJumps;
+        private int extraWallJumps;
+        private int currentWallJumps;
         private bool facingRight;
         private SpriteState spriteState;
         private KeyboardState prevKb;
@@ -37,9 +39,14 @@ namespace MEDU
         // properties
         public bool IsAlive { get => alive; set => alive = value; }
         public int ExtraJumps { get => extraJumps; set => extraJumps = value; }
+        public int ExtraWallJumps { get => extraWallJumps; set => extraWallJumps = value; }
 
         public Vector2 PlayerVelocity { get => playerVelocity; set => playerVelocity = value; }
         public bool IsOnGround { get; set; }
+        public bool IsOnRightWall { get; set; }
+        public bool IsOnLeftWall { get; set; }
+
+
 
         // constructor
         public Player(Rectangle position, Texture2D texture) 
@@ -50,6 +57,8 @@ namespace MEDU
             spriteState = SpriteState.Idle;
             extraJumps = 0;
             currentJumps = 0;
+            extraWallJumps = 0;
+            currentWallJumps = 0;
             playerVelocity = new Vector2(0, 0);
 
             // edit these values to adjust speed
@@ -76,6 +85,11 @@ namespace MEDU
             {
                 extraJumps=1;
             }
+            //Wall Jump Tester
+            if (kb.IsKeyDown(Keys.P))
+            {
+                extraWallJumps = 1;
+            }
             //relatively infinite jumps 
             if (kb.IsKeyDown(Keys.O))
             {
@@ -93,11 +107,33 @@ namespace MEDU
             }
             else
             {
-                playerVelocity.X = 0;
+                float adjust;
+                switch (playerspeedX)
+                {
+                    case > 0:
+                        adjust = playerVelocity.X - 100;
+                        playerVelocity.X = adjust;
+                        if (playerVelocity.X < 0)
+                        {
+                            playerVelocity.X = 0;
+                        }
+                        break;
+                    case < 0:
+                        adjust = playerVelocity.X+100;
+                        playerVelocity.X = adjust;
+                        if (playerVelocity.X > 0)
+                        {
+                            playerVelocity.X = 0;
+                        }
+                        break;
+                }
             }
             if (IsOnGround)
+            {
                 currentJumps = 0;
-            if(kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
+                currentWallJumps = 0;
+            }
+            if (kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
             {
                 if (IsOnGround)
                 {
@@ -109,6 +145,23 @@ namespace MEDU
                     currentJumps++;
                     playerVelocity.Y = initialJumpVelocity;
                     IsOnGround = false;
+                }
+                else if (extraWallJumps > currentWallJumps)
+                {
+                    float wallBounceVelocity = 800;
+                    if (IsOnRightWall)
+                    {
+                        playerVelocity.Y = -wallBounceVelocity;
+                        playerVelocity.X = 5*-wallBounceVelocity;
+                        currentWallJumps--;
+
+                    }
+                    else if (IsOnLeftWall)
+                    {
+                        playerVelocity.Y = -wallBounceVelocity;
+                        playerVelocity.X = 5*wallBounceVelocity;
+                        currentWallJumps--;
+                    }
                 }
             }
 

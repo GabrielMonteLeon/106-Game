@@ -236,9 +236,16 @@ namespace MEDU
             Rectangle playerRect = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
             player.IsOnGround = false;
+            player.IsOnLeftWall = false;
+            player.IsOnRightWall = false;
             List<Platform> intersections = new List<Platform>();
             foreach (Platform platform in objects)
             {
+
+                if (!platform.PassThrough)
+                {
+                    //write code here to figure out if the player is close enough to either wall to wall jump (uses IsPlayerOnLeftWall/IsPlayerOnRightWall)
+                }
                 //Ignore platforms not being collided with
                 if (!playerRect.Intersects(platform.Transform))
                     continue;
@@ -261,9 +268,9 @@ namespace MEDU
                 Platform platform = intersections[i];
                 //pass-through platforms have no horizontal collision
                 if (platform.PassThrough)
+                {
                     continue;
-
-                //all platforms are currently passthrough, so this code is never run
+                }
                 else
                 {
                     Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
@@ -279,14 +286,19 @@ namespace MEDU
                     //Resolve horizontally only if the overlap's width is less than its height
                     //if the overlap is a square, prioritize horizontal resolution
                     if (overlap.Width > overlap.Height)
+                    {
                         continue;
+                    }
 
                     //if to the left of the obstacle, move left. otherwise, move right
                     if (playerRect.X < platform.Transform.X)
+                    {
                         playerRect.X -= overlap.Width;
+                    }
                     else
+                    {
                         playerRect.X += overlap.Width;
-
+                    }
                     intersections.RemoveAt(i);
                 }
             }
