@@ -13,7 +13,7 @@ namespace MEDU
     {
         //fields
         private Rectangle transform;
-        private Texture2D texture;
+        private Sprite sprite;
         public Rectangle Transform
         {
             get
@@ -38,12 +38,13 @@ namespace MEDU
             }
         }
 
-        public Texture2D Texture => texture;
+        public Texture2D Texture => sprite.texture;
+        public Sprite Sprite => sprite;
 
-        public GameObject(Rectangle position, Texture2D texture)
+        public GameObject(Rectangle position, Sprite sprite)
         {
             this.transform = position;
-            this.texture = texture;
+            this.sprite = sprite;
         }
 
         public virtual void update(GameTime gameTime)
@@ -55,7 +56,7 @@ namespace MEDU
         {
             Rectangle screenSpacePos = Transform;
             screenSpacePos.Offset(-camPosition);
-            spriteBatch.Draw(texture, screenSpacePos, Color.White);
+            spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White);
         }
     }
 }

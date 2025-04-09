@@ -38,8 +38,16 @@ namespace MEDU
         public const int TILESIZE = 32;
 
         //Assets
-        private static Texture2D[] sprites;
-        private enum SpriteID { Pixel, CloudLeft, CloudMid, CloudRight, SolidLeft, SolidMid, SolidRight, DangerLeft, DangerMid, DangerRight, Flag }
+        private static Sprite[] sprites;
+        private enum SpriteID 
+        { 
+            Pixel, Flag,
+            CloudLeft, CloudMid, CloudRight, 
+            DangerLeft, DangerMid, DangerRight,
+            SolidTopLeft, SolidTopMid, SolidTopRight, 
+            SolidMidLeft, SolidMidMid, SolidMidRight, 
+            SolidBotLeft, SolidBotMid, SolidBotRight,
+        }
 
         /// <summary>
         /// Creates a new level from specific data. 
@@ -59,11 +67,11 @@ namespace MEDU
 
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
-            spriteBatch.Draw(sprites[(int)SpriteID.Flag], screenSpaceEnd, Color.Green);
+            spriteBatch.Draw(sprites[(int)SpriteID.Flag].texture, screenSpaceEnd, Color.Green);
 
             if (!debug)
                 return;
-            spriteBatch.Draw(sprites[0], new Rectangle(PlayerStartPos - cameraOffset.ToPoint(), new Point(TILESIZE)), Color.Blue);
+            spriteBatch.Draw(sprites[0].texture, new Rectangle(PlayerStartPos - cameraOffset.ToPoint(), new Point(TILESIZE)), Color.Blue);
         }
 
         public string GetData()
@@ -130,20 +138,7 @@ namespace MEDU
                                 currentPlatformType = 0;
                             }
                             break;
-                        case 5: //solid platform
-                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
-                            {
-                                currentPlatformStart = x;
-                                currentPlatformType = 1;
-                            }
-                            else if (currentPlatformType != 1) //if the platform being constructed is a different type
-                            {
-                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
-                                currentPlatformStart = x;
-                                currentPlatformType = 1;
-                            }
-                            break;
-                        case 1: //dangerous platform
+                        case 5: //solid platform (single row)
                             if (currentPlatformStart == -1) //if a platform is not yet being constructed
                             {
                                 currentPlatformStart = x;
@@ -154,6 +149,59 @@ namespace MEDU
                                 CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
                                 currentPlatformStart = x;
                                 currentPlatformType = 2;
+                            }
+                            break;
+                        case 6: //solid platform (top)
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 2;
+                            }
+                            else if (currentPlatformType != 2) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 2;
+                            }
+                            break;
+                        case 8: //solid platform (middle)
+                        case 9:
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 3;
+                            }
+                            else if (currentPlatformType != 3) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 3;
+                            }
+                            break;
+                        case 7: //solid platform (bottom)
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 4;
+                            }
+                            else if (currentPlatformType != 4) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 4;
+                            }
+                            break;
+                        case 1: //dangerous platform
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 1;
+                            }
+                            else if (currentPlatformType != 1) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 1;
                             }
                             break;
                         
@@ -177,15 +225,19 @@ namespace MEDU
                 bool passThrough = platformType switch
                 {
                     0 => true, //normal passthrough
-                    1 => false, //normal solid
-                    2 => false, //dangerous
+                    1 => false, //dangerous
+                    2 => false, //solid top
+                    3 => false, //solid mid
+                    4 => false, //solid bottom
                     _ => true
                 };
                 bool isSafe = platformType switch
                 {
                     0 => true, //normal passthrough
-                    1 => true, //normal solid
-                    2 => false, //dangerous
+                    1 => false, //dangerous
+                    2 => true, //solid top
+                    3 => true, //solid mid
+                    4 => true, //solid bottom
                     _ => true
                 };
                 platforms.Add(new Platform(
@@ -199,18 +251,24 @@ namespace MEDU
         /// </summary>
         public static void LoadAssets(ContentManager content)
         {
-            sprites = new Texture2D[11];
-            sprites[(int)SpriteID.Pixel]       = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.CloudLeft]   = content.Load<Texture2D>("CloudLeft");
-            sprites[(int)SpriteID.CloudMid]    = content.Load<Texture2D>("CloudMid");
-            sprites[(int)SpriteID.CloudRight]  = content.Load<Texture2D>("CloudRight");
-            sprites[(int)SpriteID.SolidLeft]   = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.SolidMid]    = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.SolidRight]  = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.DangerLeft]  = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.DangerMid]   = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.DangerRight] = content.Load<Texture2D>("pixel");
-            sprites[(int)SpriteID.Flag]        = content.Load<Texture2D>("pixel");
+            sprites = new Sprite[17];
+            sprites[(int)SpriteID.Pixel]         = new Sprite(content.Load<Texture2D>("pixel"));
+            sprites[(int)SpriteID.CloudLeft]     = new Sprite(content.Load<Texture2D>("CloudLeft"));
+            sprites[(int)SpriteID.CloudMid]      = new Sprite(content.Load<Texture2D>("CloudMid"));
+            sprites[(int)SpriteID.CloudRight]    = new Sprite(content.Load<Texture2D>("CloudRight"));
+            sprites[(int)SpriteID.SolidTopLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidTopMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidTopRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidMidLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidMidMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidMidRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidBotLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidBotMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidBotRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.DangerLeft]    = new Sprite(content.Load<Texture2D>("DangerLeft"));
+            sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
+            sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
+            sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("pixel"));
         }
     }
 }

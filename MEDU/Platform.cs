@@ -12,13 +12,13 @@ namespace MEDU
     {
         private bool passThrough;
         private bool isSafe;
-        private Texture2D leftTexture;
-        private Texture2D rightTexture;
+        private Sprite leftTexture;
+        private Sprite rightTexture;
 
         public bool PassThrough => passThrough;
         public bool IsSafe => isSafe;
 
-        public Platform(Rectangle position, Texture2D midTexture, Texture2D leftTexture, Texture2D rightTexture, bool passThrough, bool isSafe) : base(position, midTexture)
+        public Platform(Rectangle position, Sprite midTexture, Sprite leftTexture, Sprite rightTexture, bool passThrough, bool isSafe) : base(position, midTexture)
         {
             this.passThrough = passThrough;
             this.isSafe = isSafe;
@@ -36,51 +36,33 @@ namespace MEDU
                 //Render half of left and right textures
                 int textureSize = leftTexture.Width;
 
-                Rectangle leftSourceRect = new Rectangle(0, 0, leftTexture.Width / 2, leftTexture.Height);
-                Rectangle rightSourceRect = leftSourceRect;
+                Rectangle leftSourceRect = leftTexture.Bounds;
+                leftSourceRect.Width /= 2;
+
+                Rectangle rightSourceRect = rightTexture.Bounds;
+                rightSourceRect.Width /= 2;
                 rightSourceRect.X += rightSourceRect.Width;
 
                 Rectangle leftDestRect = screenPos;
                 leftDestRect.Width /= 2;
                 Rectangle rightDestRect = leftDestRect;
                 rightDestRect.X += rightDestRect.Width;
-                if (isSafe)
-                {
-                    spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.White);
-                    spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.White);
-                }
-                else
-                {
-                    spriteBatch.Draw(leftTexture, leftDestRect, leftSourceRect, Color.Red);
-                    spriteBatch.Draw(rightTexture, rightDestRect, rightSourceRect, Color.Red);
-                }
+                spriteBatch.Draw(leftTexture.texture, leftDestRect, leftSourceRect, Color.White);
+                spriteBatch.Draw(rightTexture.texture, rightDestRect, rightSourceRect, Color.White);
             }
             else
             {
                 Rectangle destination = screenPos;
                 destination.Width = destination.Height;
-                if (isSafe)
+
+                spriteBatch.Draw(leftTexture.texture, destination, leftTexture.sourceRect, Color.White);
+                destination.X += destination.Width;
+                for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
                 {
-                    spriteBatch.Draw(leftTexture, destination, Color.White);
+                    spriteBatch.Draw(Sprite.texture, destination, Sprite.sourceRect, Color.White);
                     destination.X += destination.Width;
-                    for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
-                    {
-                        spriteBatch.Draw(Texture, destination, Color.White);
-                        destination.X += destination.Width;
-                    }
-                    spriteBatch.Draw(rightTexture, destination, Color.White);
                 }
-                else
-                {
-                    spriteBatch.Draw(leftTexture, destination, Color.Red);
-                    destination.X += destination.Width;
-                    for (int i = 1; i < screenPos.Width / screenPos.Height - 1; i++)
-                    {
-                        spriteBatch.Draw(Texture, destination, Color.Red);
-                        destination.X += destination.Width;
-                    }
-                    spriteBatch.Draw(rightTexture, destination, Color.Red);
-                }
+                spriteBatch.Draw(rightTexture.texture, destination, rightTexture.sourceRect, Color.White);
             }
         }
     }

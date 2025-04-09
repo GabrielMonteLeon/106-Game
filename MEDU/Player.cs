@@ -49,7 +49,7 @@ namespace MEDU
 
 
         // constructor
-        public Player(Rectangle position, Texture2D texture) 
+        public Player(Rectangle position, Sprite texture) 
             : base(position, texture)
         {
             alive = true;
@@ -62,9 +62,9 @@ namespace MEDU
             playerVelocity = new Vector2(0, 0);
 
             // edit these values to adjust speed
-            playerspeedX = 600;
-            initialJumpVelocity = -1200;
-            gravity = 2500;
+            playerspeedX = Level.TILESIZE * 15;
+            initialJumpVelocity = Level.TILESIZE * -28;
+            gravity = Level.TILESIZE * 80;
         }
 
         public void Reset(Point position)

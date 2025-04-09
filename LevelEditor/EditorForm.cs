@@ -170,6 +170,9 @@
             {
                 for (int y = 0; y < height; y++)
                 {
+                    byte tileID = data[x * height + y];
+                    if (tileID > 5) //5-8 are all solid block variations
+                        tileID = 5;
                     PaintTile(x, y, data[x * height + y], false);
                 }
             }
@@ -272,9 +275,44 @@
                 writer.Write((byte)tileMapData.GetLength(1));
                 for (int x = 0; x < tileMapData.GetLength(0); x++)
                 {
+                    byte previousTile = 0;
                     for (int y = 0; y < tileMapData.GetLength(1); y++)
                     {
-                        writer.Write((byte)tileMapData[x, y]);
+                        byte tileID = (byte)tileMapData[x, y];
+                        if(tileID == 5) //solid block
+                        {
+                            bool top = (y == 0 || tileMapData[x, y - 1] != 5);
+                            bool bottom = (y == tileMapData.GetLength(1) || tileMapData[x, y + 1] != 5);
+
+                            //single row
+                            if(top && bottom)
+                            {
+                                tileID = 5;
+                            }
+                            //top row
+                            else if(top)
+                            {
+                                tileID = 6;
+                            }
+                            //bottom row
+                            else if(bottom)
+                            {
+                                tileID = 7;
+                            }
+                            //middle row
+                            else
+                            {
+                                tileID = 8;
+                            }
+                            //if previous tile was a solid block of a different type...
+                            if (previousTile >= 5 && previousTile <= 8 && previousTile != tileID)
+                            {
+                                //special solid block (indicates left/right boundary tiles shouldn't be placed at this change)
+                                tileID = 9;
+                            }
+                        }
+                        writer.Write(tileID);
+                        previousTile = tileID;
                     }
                 }
             }
