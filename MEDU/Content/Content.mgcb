@@ -184,18 +184,6 @@
 /processorParam:TextureFormat=Color
 /build:SolidMid.png
 
-#begin SolidMid.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SolidMid.png
-
 #begin SolidRight.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -219,6 +207,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:SolidVert.png
+
+#begin spritefont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:spritefont.spritefont
 
 #begin Start.png
 /importer:TextureImporter
