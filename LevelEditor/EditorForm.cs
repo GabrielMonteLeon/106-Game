@@ -66,42 +66,19 @@
             undoQueue = new LinkedList<ActionData>();
             undoPos = null;
             savePos = null;
-        }
 
-        /// <summary>
-        /// Initializes a new blank map.
-        /// </summary>
-        public void InitNewMap(int width, int height)
-        {
-            if (tileMapData != null)
-            {
-                Cleanup();
-            }
-
-            tileMapData = new int[width, height];
-            SelectColor(0);
-            currentFile = "";
-            undoQueue = new LinkedList<ActionData>();
-            undoPos = null;
-            savePos = null;
-
-            //calculate tile/map sizes
+            //Create tile visuals
             tileSize = 32;
             int visibleTilesX = mapPanel.Width / tileSize;
             int visibleTilesY = mapPanel.Height / tileSize;
             tileMapVisuals = new PictureBox[visibleTilesX, visibleTilesY];
-            //adjust scroll bars based on map size
-            AdjustScrollBars();
 
-            //Create map picture boxes;
             for (int x = 0; x < visibleTilesX; x++)
             {
                 for (int y = 0; y < visibleTilesY; y++)
                 {
                     PictureBox tile = new PictureBox();
                     tileMapVisuals[x, y] = tile;
-                    //the first color is the default color
-                    tile.BackColor = colorPalette[0];
                     tile.Location = new Point(tileSize * x, tileSize * y);
                     tile.Size = new Size(tileSize, tileSize);
                     int currentX = x;
@@ -114,6 +91,38 @@
                     mapPanel.Controls.Add(tile);
                 }
             }
+        }
+
+        /// <summary>
+        /// Initializes a new blank map.
+        /// </summary>
+        public void InitNewMap(int width, int height, bool fullClear = true)
+        {
+            if (tileMapData != null)
+            {
+                Cleanup();
+            }
+
+            tileMapData = new int[width, height];
+            if(fullClear)
+            {
+                for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+                {
+                    for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                    {
+                        //the first color is the default color
+                        tileMapVisuals[x, y].BackColor = colorPalette[0];
+                    }
+                }
+            }
+            SelectColor(0);
+            currentFile = "";
+            undoQueue = new LinkedList<ActionData>();
+            undoPos = null;
+            savePos = null;
+
+            //adjust scroll bars based on map size
+            AdjustScrollBars();
 
             UpdateTitle();
             UpdateButtons();
@@ -164,7 +173,7 @@
                 if (reader != null)
                     reader.Close();
             }
-            InitNewMap(width, height);
+            InitNewMap(width, height, false);
             currentFile = filePath;
             for (int x = 0; x < width; x++)
             {
@@ -173,7 +182,7 @@
                     byte tileID = data[x * height + y];
                     if (tileID > 5) //5-8 are all solid block variations
                         tileID = 5;
-                    PaintTile(x, y, data[x * height + y], false);
+                    PaintTile(x, y, tileID, false);
                 }
             }
             UpdateTitle();
@@ -199,7 +208,6 @@
         /// </summary>
         private void Cleanup()
         {
-            mapBox.Controls.Clear();
             //this signals that everything is cleaned up
             tileMapData = null!;
 
