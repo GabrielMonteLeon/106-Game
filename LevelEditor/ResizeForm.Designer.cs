@@ -87,6 +87,8 @@
             // leftValue
             // 
             leftValue.Location = new Point(108, 61);
+            leftValue.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            leftValue.Minimum = new decimal(new int[] { 10000, 0, 0, int.MinValue });
             leftValue.Name = "leftValue";
             leftValue.Size = new Size(38, 23);
             leftValue.TabIndex = 5;
@@ -95,6 +97,8 @@
             // rightValue
             // 
             rightValue.Location = new Point(108, 90);
+            rightValue.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            rightValue.Minimum = new decimal(new int[] { 10000, 0, 0, int.MinValue });
             rightValue.Name = "rightValue";
             rightValue.Size = new Size(38, 23);
             rightValue.TabIndex = 6;
@@ -103,6 +107,8 @@
             // topValue
             // 
             topValue.Location = new Point(108, 119);
+            topValue.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            topValue.Minimum = new decimal(new int[] { 10000, 0, 0, int.MinValue });
             topValue.Name = "topValue";
             topValue.Size = new Size(38, 23);
             topValue.TabIndex = 7;
@@ -111,6 +117,8 @@
             // bottomValue
             // 
             bottomValue.Location = new Point(108, 148);
+            bottomValue.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            bottomValue.Minimum = new decimal(new int[] { 10000, 0, 0, int.MinValue });
             bottomValue.Name = "bottomValue";
             bottomValue.Size = new Size(38, 23);
             bottomValue.TabIndex = 8;
@@ -158,6 +166,7 @@
             submitButton.TabIndex = 13;
             submitButton.Text = "Submit";
             submitButton.UseVisualStyleBackColor = true;
+            submitButton.Click += Submit;
             // 
             // cancelButton
             // 
@@ -167,6 +176,7 @@
             cancelButton.TabIndex = 14;
             cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += Cancel;
             // 
             // ResizeForm
             // 

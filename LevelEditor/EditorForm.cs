@@ -47,7 +47,8 @@
         /// </summary>
         private LinkedListNode<ActionData>? savePos;
 
-        private bool IsSaved => undoPos == savePos && currentAction == null;
+        private bool IsSaved => undoPos == savePos && currentAction == null && !wasResized;
+        private bool wasResized;
 
         public EditorForm()
         {
@@ -66,6 +67,7 @@
             undoQueue = new LinkedList<ActionData>();
             undoPos = null;
             savePos = null;
+            wasResized = false;
 
             //Create tile visuals
             tileSize = 32;
@@ -337,6 +339,7 @@
 
             currentFile = filePath;
             savePos = undoPos;
+            wasResized = false;
             UpdateTitle();
             MessageBox.Show("Saved Successfully");
             return true;
@@ -408,7 +411,7 @@
                 colorIndex = selectedColorIndex;
 
             int prevColorIndex = tileMapData[x, y];
-            if (prevColorIndex == colorIndex)
+            if (prevColorIndex == colorIndex && asAction)
                 return;
 
             if (asAction)
@@ -605,7 +608,46 @@
 
         private void resizeGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Grid Resize not yet implemented.");
+            ResizeForm resize = new ResizeForm(tileMapData.GetLength(0), tileMapData.GetLength(1));
+            resize.ShowDialog();
+            if (resize.Result != DialogResult.OK)
+                return;
+            int newWidth = resize.FinalWidth;
+            int newHeight = resize.FinalHeight;
+            if(newWidth <= 0 || newHeight <= 0)
+            {
+                MessageBox.Show("Width and Height must be greater than 0.", "Invalid Resize", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int[,] newData = new int[newWidth, newHeight];
+
+            //record where the previous boundaries would end up in the new canvas.
+            //If they'd be off the new canvas, instead treat them as being on the edge of the new canvas.
+            int oldLeft = Math.Max(0, resize.LeftChange);
+            int oldRight = newWidth - Math.Max(0, resize.RightChange);
+            int oldTop = Math.Max(0, resize.TopChange);
+            int oldBottom = newHeight - Math.Max(0, resize.BottomChange);
+
+            for(int newX = oldLeft; newX < oldRight; newX++)
+            {
+                int oldX = newX - resize.LeftChange;
+                for(int newY = oldTop; newY < oldBottom; newY++)
+                {
+                    int oldY = newY - resize.TopChange;
+                    newData[newX, newY] = tileMapData[oldX, oldY];
+                }
+            }
+
+            tileMapData = newData;
+            AdjustScrollBars();
+            UpdateScroll();
+            //resizing canvas can't be undone (because I'm too lazy to update the undo function)
+            undoQueue = new LinkedList<ActionData>();
+            undoPos = null;
+            wasResized = true;
+            UpdateTitle();
+            UpdateButtons();
         }
 
         private void AdjustZoom(object sender, EventArgs e)
