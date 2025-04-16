@@ -20,6 +20,7 @@ namespace MEDU
         // fields
         private double animationTimer;
         private bool alive;
+        private float coyoteTimer;
         private int extraJumps;
         private int currentJumps;
         private int extraWallJumps;
@@ -34,6 +35,7 @@ namespace MEDU
         private float playerspeedX;
         private float initialJumpVelocity;
         private float gravity;
+        private float coyoteTime;
 
 
         // properties
@@ -41,6 +43,10 @@ namespace MEDU
         public int ExtraJumps { get => extraJumps; set => extraJumps = value; }
         public int ExtraWallJumps { get => extraWallJumps; set => extraWallJumps = value; }
 
+        /// <summary>
+        /// Used by the physics function to move the player and handle collision
+        /// The player's position is NOT updated in the player class.
+        /// </summary>
         public Vector2 PlayerVelocity { get => playerVelocity; set => playerVelocity = value; }
         public bool IsOnGround { get; set; }
         public bool IsOnRightWall { get; set; }
@@ -65,6 +71,7 @@ namespace MEDU
             playerspeedX = Level.TILESIZE * 15;
             initialJumpVelocity = Level.TILESIZE * -28;
             gravity = Level.TILESIZE * 80;
+            coyoteTime = 0.1f;
         }
 
         public void Reset(Point position)
@@ -132,13 +139,19 @@ namespace MEDU
             {
                 currentJumps = 0;
                 currentWallJumps = 0;
+                coyoteTimer = coyoteTime;
+            }
+            else
+            {
+                coyoteTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             if (kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
             {
-                if (IsOnGround)
+                if (coyoteTimer > 0)
                 {
                     playerVelocity.Y = initialJumpVelocity;
                     IsOnGround = false;
+                    coyoteTimer = 0;
                 }
                 else if (extraJumps>currentJumps)
                 {
@@ -164,8 +177,7 @@ namespace MEDU
                     }
                 }
             }
-
-            UpdatePosition((float)gameTime.ElapsedGameTime.TotalSeconds);
+            playerVelocity.Y += gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // tracks kb state for next frame
             prevKb = kb;
         }
@@ -180,16 +192,6 @@ namespace MEDU
             else
                 spriteState = SpriteState.Idle;
             base.draw(spriteBatch, camPosition);
-        }
-        /// <summary>
-        /// updates player position based on velocity
-        /// </summary>
-        public void UpdatePosition(float deltaTime)
-        {
-            Rectangle pos = Transform;
-            playerVelocity.Y += gravity * deltaTime;
-            pos.Location += (playerVelocity * deltaTime).ToPoint();
-            this.Transform = pos;
         }
     }
 }
