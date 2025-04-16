@@ -17,7 +17,11 @@ with.
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
+<<<<<<< HEAD
     <Size>48</Size>
+=======
+    <Size>20</Size>
+>>>>>>> 7a9d9281068e427281f7a3af28d73d66289582ce
 
     <!--
     Spacing is a float value, measured in pixels. Modify this value to change
