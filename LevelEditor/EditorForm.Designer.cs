@@ -97,6 +97,7 @@
             pColor5.Name = "pColor5";
             pColor5.Size = new Size(45, 45);
             pColor5.TabIndex = 4;
+            pColor5.Text = "Move";
             pColor5.UseVisualStyleBackColor = false;
             pColor5.Click += SelectColor;
             // 
