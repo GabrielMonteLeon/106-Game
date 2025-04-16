@@ -47,8 +47,13 @@
         /// </summary>
         private LinkedListNode<ActionData>? savePos;
 
-        private bool IsSaved => undoPos == savePos && currentAction == null && !wasResized;
-        private bool wasResized;
+        private int selectStartX;
+        private int selectStartY;
+        private int selectEndX;
+        private int selectEndY;
+
+        private bool IsSaved => undoPos == savePos && currentAction == null && !dirty;
+        private bool dirty;
 
         public EditorForm()
         {
@@ -67,7 +72,7 @@
             undoQueue = new LinkedList<ActionData>();
             undoPos = null;
             savePos = null;
-            wasResized = false;
+            dirty = false;
 
             //Create tile visuals
             tileSize = 32;
@@ -126,8 +131,7 @@
             //adjust scroll bars based on map size
             AdjustScrollBars();
 
-            UpdateTitle();
-            UpdateButtons();
+            UpdateInfoDisplay();
         }
 
         private void LoadButtonPressed(object sender, EventArgs e)
@@ -187,8 +191,7 @@
                     PaintTile(x, y, tileID, false);
                 }
             }
-            UpdateTitle();
-            UpdateButtons();
+            UpdateInfoDisplay();
 
             MessageBox.Show("Successfully Loaded");
             return true;
@@ -339,8 +342,8 @@
 
             currentFile = filePath;
             savePos = undoPos;
-            wasResized = false;
-            UpdateTitle();
+            dirty = false;
+            UpdateInfoDisplay();
             MessageBox.Show("Saved Successfully");
             return true;
         }
@@ -353,7 +356,36 @@
             sender.Capture = false;
             int trueX = visualX + scrollX;
             int trueY = visualY + scrollY;
-            PaintTile(trueX, trueY);
+
+            if (selectedColorIndex == 4)
+            {
+                if (selectStartX == -1)
+                {
+                    selectStartX = trueX;
+                    selectStartY = trueY;
+                    selectEndX = trueX;
+                    selectEndY = trueY;
+                    RepaintCanvas();
+                }
+                else
+                {
+                    MoveSelection(trueX, trueY);
+                }
+            }
+            else
+            {
+                PaintTile(trueX, trueY);
+            }
+        }
+
+        private void MoveSelection(int newOriginX, int newOriginY)
+        {
+            int startX = Math.Min(selectStartX, selectEndX);
+            int startY = Math.Min(selectStartY, selectEndY);
+
+            RepaintCanvas();
+            InvalidateUndo();
+            UpdateInfoDisplay();
         }
 
         private void OnTileMouseEnter(int visualX, int visualY)
@@ -419,8 +451,7 @@
                 if (currentAction == null)
                 {
                     currentAction = new ActionData(colorIndex);
-                    UpdateTitle();
-                    UpdateButtons();
+                    UpdateInfoDisplay();
                 }
                 currentAction.Value.paintedCoords.Add((x, y, prevColorIndex));
             }
@@ -457,8 +488,15 @@
             undoPos = undoQueue.Last;
             currentAction = null;
 
-            UpdateTitle();
-            UpdateButtons();
+            UpdateInfoDisplay();
+        }
+
+        private void InvalidateUndo(bool markDirty = true)
+        {
+            undoQueue = new LinkedList<ActionData>();
+            undoPos = null;
+            if(markDirty)
+                dirty = true;
         }
 
         public void Undo()
@@ -473,8 +511,7 @@
             }
             undoPos = undoPos.Previous;
 
-            UpdateTitle();
-            UpdateButtons();
+            UpdateInfoDisplay();
         }
 
         public bool CanUndo()
@@ -506,8 +543,7 @@
                 PaintTile(paintedCoord.x, paintedCoord.y, data.newColorIndex, false);
             }
 
-            UpdateTitle();
-            UpdateButtons();
+            UpdateInfoDisplay();
         }
 
         public bool CanRedo()
@@ -525,7 +561,7 @@
                 return true;
         }
 
-        private void UpdateTitle()
+        private void UpdateInfoDisplay()
         {
             string titleText = "Map Editor";
             if (currentFile != "")
@@ -537,16 +573,13 @@
                 titleText += "*";
             }
             this.Text = titleText;
-        }
 
-        private void UpdateButtons()
-        {
             saveFileButton.Enabled = !IsSaved || currentFile == null;
             undoButton.Enabled = CanUndo();
             redoButton.Enabled = CanRedo();
         }
 
-        private void UpdateScroll()
+        private void RepaintCanvas()
         {
             for (int x = 0; x < tileMapVisuals.GetLength(0); x++)
             {
@@ -596,14 +629,14 @@
         {
             System.Diagnostics.Debug.WriteLine($"Horizontal scroll to {e.NewValue}.");
             scrollX = e.NewValue;
-            UpdateScroll();
+            RepaintCanvas();
         }
 
         private void scrollBarVertical_Scroll(object sender, ScrollEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
             scrollY = e.NewValue;
-            UpdateScroll();
+            RepaintCanvas();
         }
 
         private void resizeGridToolStripMenuItem_Click(object sender, EventArgs e)
@@ -641,13 +674,10 @@
 
             tileMapData = newData;
             AdjustScrollBars();
-            UpdateScroll();
+            RepaintCanvas();
             //resizing canvas can't be undone (because I'm too lazy to update the undo function)
-            undoQueue = new LinkedList<ActionData>();
-            undoPos = null;
-            wasResized = true;
-            UpdateTitle();
-            UpdateButtons();
+            InvalidateUndo();
+            UpdateInfoDisplay();
         }
 
         private void AdjustZoom(object sender, EventArgs e)
