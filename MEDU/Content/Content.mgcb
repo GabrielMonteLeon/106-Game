@@ -25,6 +25,13 @@
 /processorParam:TextureFormat=Color
 /build:background.jpg
 
+#begin ByteBounce.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ByteBounce.spritefont
+
 #begin CharacterLeft.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -133,13 +140,6 @@
 /processorParam:TextureFormat=Color
 /build:DangerRight.png
 
-#begin DescriptionFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:DescriptionFont.spritefont
-
 #begin End.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -151,6 +151,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:End.png
+
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:LocalizedFontProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont
 
 #begin Flag.png
 /importer:TextureImporter

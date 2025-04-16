@@ -31,6 +31,9 @@ namespace MEDU
         private Point cameraCenterOffset;
         private MouseState prevMsState;
 
+        //font
+        private SpriteFont byteBounce;
+
 
         //menu fields
         private Rectangle Start;
@@ -98,11 +101,12 @@ namespace MEDU
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
             }
-            font = Content.Load<SpriteFont>("spritefont");
-            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); 
+            /*font = Content.Load<SpriteFont>("spritefont");
+            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); */
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
+            byteBounce = Content.Load<SpriteFont>("ByteBounce");
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
@@ -195,7 +199,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
                 case (MenuState.LevelSelect):
-                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
+                    _spriteBatch.DrawString(byteBounce, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
                         Color color = Color.White;
