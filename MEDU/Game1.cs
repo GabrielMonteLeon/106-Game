@@ -141,12 +141,12 @@ namespace MEDU
                     cameraPosition = (player.Transform.Center - cameraCenterOffset).ToVector2();
                     if (!player.IsAlive)
                         menuState = MenuState.LevelFailed;
-                    if (player.Transform.Intersects(currentLevel.EndTrigger))
+                    else if (player.Transform.Intersects(currentLevel.EndTrigger))
                     {
                         currentLevel.Completed = true;
                         menuState = MenuState.LevelComplete;
                     }
-                    if (Keyboard.GetState().IsKeyDown(Keys.P))
+                    else if (Keyboard.GetState().IsKeyDown(Keys.P))
                         menuState = MenuState.Pause;
                     break;
                 case (MenuState.Pause):
