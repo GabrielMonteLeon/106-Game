@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
@@ -30,6 +31,9 @@ namespace MEDU
         private MenuState menuState;
         private Point cameraCenterOffset;
         private MouseState prevMsState;
+
+        //font
+        private SpriteFont byteBounce;
 
 
         //menu fields
@@ -76,6 +80,7 @@ namespace MEDU
                 _graphics.PreferredBackBufferHeight - 75,
                 70,
                 70);
+            timer = 0;
         }
 
         protected override void LoadContent()
@@ -98,11 +103,12 @@ namespace MEDU
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
             }
-            font = Content.Load<SpriteFont>("spritefont");
-            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); 
+            /*font = Content.Load<SpriteFont>("spritefont");
+            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); */
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
+            byteBounce = Content.Load<SpriteFont>("ByteBounce");
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
@@ -143,6 +149,7 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.Level):
+                    timer += gameTime.ElapsedGameTime.TotalSeconds;
                     player.update(gameTime);
                     HandlePhysics(gameTime);
                     CheckIfPlayerOutofBounds(player);
@@ -195,7 +202,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
                 case (MenuState.LevelSelect):
-                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
+                    _spriteBatch.DrawString(byteBounce, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
                         Color color = Color.White;
@@ -207,11 +214,12 @@ namespace MEDU
                     break;
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
+                    String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
                     _spriteBatch.DrawString(font,
-                        "insert timer",
+                        time,
                         new Vector2(10, 20),
-                        Color.White);
+                        Color.Yellow);
                     _spriteBatch.DrawString(descriptionFont,
                         "press 'p' to pause game", 
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
@@ -249,6 +257,7 @@ namespace MEDU
             currentLevel = levels[level];
             levelNum = level;
             player.Reset(currentLevel.PlayerStartPos);
+            timer = 0;
         }
 
         public void GoToMenu()
