@@ -125,10 +125,10 @@ namespace MEDU
                             break;
                         case 4: //player start
                             startPos = new Point(x * TILESIZE, y * TILESIZE);
-                            break;
+                            goto case 0;
                         case 2: //level end
                             endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
-                            break;
+                            goto case 0;
                         case 3: //passthrough platform
                             if (currentPlatformStart == -1) //if a platform is not yet being constructed
                             {
@@ -208,11 +208,16 @@ namespace MEDU
                                 currentPlatformType = 1;
                             }
                             break;
-                        
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
-                            break;
+                            goto case 0;
                     }
+                }
+                if (currentPlatformStart != -1)
+                {
+                    CreatePlatform(currentPlatformStart, width, y, currentPlatformType);
+                    currentPlatformStart = -1;
+                    currentPlatformType = -1;
                 }
             }
             if (startPos.X < 0)
