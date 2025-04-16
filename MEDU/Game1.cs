@@ -201,9 +201,13 @@ namespace MEDU
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     player.draw(_spriteBatch, cameraPosition);
+                    _spriteBatch.DrawString(font,
+                        "insert timer",
+                        new Vector2(10, 20),
+                        Color.White);
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'p' to pause game.", 
-                        new Vector2(5, _graphics.PreferredBackBufferHeight - 20), 
+                        "press 'p' to pause game", 
+                        new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
                         Color.White);
                     break;
                 case (MenuState.Pause):
@@ -216,7 +220,7 @@ namespace MEDU
                 case (MenuState.LevelComplete):
                     _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
-                        "click to continue.",
+                        "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 50, _graphics.PreferredBackBufferHeight/2 + 20),
                         Color.White);
                     break;
