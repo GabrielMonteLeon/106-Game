@@ -58,9 +58,6 @@ namespace MEDU
         protected override void Initialize()
         {
             base.Initialize();
-            _graphics.PreferredBackBufferWidth = _graphics.PreferredBackBufferWidth * 2;
-            _graphics.PreferredBackBufferHeight = _graphics.PreferredBackBufferHeight * 2;
-            _graphics.ApplyChanges();
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, GraphicsDevice.Viewport.Height / 2 - 50, 100, 100);
             End = new Rectangle(Start.X,Start.Y, 100, 100);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);

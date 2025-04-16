@@ -39,7 +39,7 @@ namespace MEDU
         /// </summary>
         public bool Completed { get; set; }
 
-        public const int TILESIZE = 64;
+        public const int TILESIZE = 32;
 
         //Assets
         private static Sprite[] sprites;
