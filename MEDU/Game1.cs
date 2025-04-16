@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
@@ -72,6 +73,7 @@ namespace MEDU
                 _graphics.PreferredBackBufferHeight - 75,
                 70,
                 70);
+            timer = 0;
         }
 
         protected override void LoadContent()
@@ -137,6 +139,7 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.Level):
+                    timer += gameTime.ElapsedGameTime.TotalSeconds;
                     player.update(gameTime);
                     HandlePhysics(gameTime);
                     CheckIfPlayerOutofBounds(player);
@@ -200,11 +203,12 @@ namespace MEDU
                     break;
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
+                    String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
                     _spriteBatch.DrawString(font,
-                        "insert timer",
+                        time,
                         new Vector2(10, 20),
-                        Color.White);
+                        Color.Yellow);
                     _spriteBatch.DrawString(descriptionFont,
                         "press 'p' to pause game", 
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
@@ -242,6 +246,7 @@ namespace MEDU
             currentLevel = levels[level];
             levelNum = level;
             player.Reset(currentLevel.PlayerStartPos);
+            timer = 0;
         }
 
         public void GoToMenu()
