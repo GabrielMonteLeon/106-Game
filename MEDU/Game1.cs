@@ -49,6 +49,7 @@ namespace MEDU
 
         // level complete
         private SpriteFont font;
+        private SpriteFont descriptionFont;
 
         public Game1()
         {
@@ -94,6 +95,7 @@ namespace MEDU
                 levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
             }
             font = Content.Load<SpriteFont>("spritefont");
+            descriptionFont = Content.Load<SpriteFont>("DescriptionFont");
             title = Content.Load<Texture2D>("TitleCard");
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
@@ -199,12 +201,24 @@ namespace MEDU
                 case (MenuState.Level):
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     player.draw(_spriteBatch, cameraPosition);
+                    _spriteBatch.DrawString(descriptionFont,
+                        "press 'p' to pause game.", 
+                        new Vector2(5, _graphics.PreferredBackBufferHeight - 20), 
+                        Color.White);
                     break;
                 case (MenuState.Pause):
-                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(230, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(descriptionFont,
+                        "press 'r' to continue.",
+                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 50, _graphics.PreferredBackBufferHeight / 2 + 20),
+                        Color.White); 
                     break;
                 case (MenuState.LevelComplete):
-                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(descriptionFont,
+                        "click to continue.",
+                        new Vector2(_graphics.PreferredBackBufferWidth/2 - 50, _graphics.PreferredBackBufferHeight/2 + 20),
+                        Color.White);
                     break;
                 case (MenuState.LevelFailed):
                     _spriteBatch.Draw(end_texture, End, Color.White);
