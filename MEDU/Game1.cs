@@ -42,6 +42,8 @@ namespace MEDU
         private MouseState pms;
         private Texture2D title;
         private Rectangle titleRect;
+        private Texture2D background;
+        private Rectangle backgroundRect;
 
         //level select fields
         private Rectangle[] levelSelection;
@@ -62,10 +64,12 @@ namespace MEDU
         protected override void Initialize()
         {
             base.Initialize();
+
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
             End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 - 75,150, 150);
             titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 3 - 100, 400, 200);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
+            backgroundRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             menuState = MenuState.Menu;
             player = new Player(new Rectangle(10,10,Level.TILESIZE,Level.TILESIZE*2), Content.Load<Texture2D>("CharacterRight"));
             select = new Rectangle(
@@ -97,8 +101,10 @@ namespace MEDU
                 levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
             }
             font = Content.Load<SpriteFont>("spritefont");
-            descriptionFont = Content.Load<SpriteFont>("DescriptionFont");
-            title = Content.Load<Texture2D>("TitleCard");
+            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); 
+
+            title = Content.Load<Texture2D>("Title");
+            background = Content.Load<Texture2D>("background");
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
@@ -187,6 +193,7 @@ namespace MEDU
             switch (menuState)
             {
                 case (MenuState.Menu):
+                    _spriteBatch.Draw(background, backgroundRect, Color.White);
                     _spriteBatch.Draw(title, titleRect, Color.White);
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
@@ -215,14 +222,14 @@ namespace MEDU
                         Color.White);
                     break;
                 case (MenuState.Pause):
-                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'r' to continue",
-                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 50, _graphics.PreferredBackBufferHeight / 2 + 20),
+                        "press 'r' to continue.",
+                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 80, _graphics.PreferredBackBufferHeight / 2 + 20),
                         Color.White); 
                     break;
                 case (MenuState.LevelComplete):
-                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
                         "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 50, _graphics.PreferredBackBufferHeight/2 + 20),
