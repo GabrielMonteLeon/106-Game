@@ -136,7 +136,7 @@ namespace MEDU
                     break;
                 case (MenuState.Level):
                     player.update(gameTime);
-                    HandleCollision();
+                    HandlePhysics(gameTime);
                     CheckIfPlayerOutofBounds(player);
                     cameraPosition = (player.Transform.Center - cameraCenterOffset).ToVector2();
                     if (!player.IsAlive)
@@ -243,24 +243,24 @@ namespace MEDU
             }
         }
 
-        public void HandleCollision()
+        public void HandlePhysics(GameTime gameTime)
         {
-            List<Platform> objects = currentLevel.Platforms;
-            Rectangle playerRect = player.Transform;
+            Rectangle oldPlayerTransform = player.Transform;
+            Rectangle newPlayerTransform = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
             player.IsOnGround = false;
             player.IsOnLeftWall = false;
             player.IsOnRightWall = false;
+            //Move player with velocity
+            newPlayerTransform.Offset(player.PlayerVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            //Check collisions
+            List<Platform> objects = currentLevel.Platforms;
             List<Platform> intersections = new List<Platform>();
             foreach (Platform platform in objects)
             {
-
-                if (!platform.PassThrough)
-                {
-                    //write code here to figure out if the player is close enough to either wall to wall jump (uses IsPlayerOnLeftWall/IsPlayerOnRightWall)
-                }
                 //Ignore platforms not being collided with
-                if (!playerRect.Intersects(platform.Transform))
+                if (!newPlayerTransform.Intersects(platform.Transform))
                     continue;
 
                 //If the platform is deadly, kill the player. Any further collisions are irrelevant.
@@ -286,9 +286,9 @@ namespace MEDU
                 }
                 else
                 {
-                    Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+                    Rectangle overlap = Rectangle.Intersect(platform.Transform, newPlayerTransform);
 
-                    //if there's no overlap there's no more intersection!
+                    //if there's no overlap, there's no more intersection!
                     //(this would be pretty common for horizontal collisions since each row of tiles have their own collision box)
                     if (overlap.Width == 0)
                     {
@@ -304,13 +304,13 @@ namespace MEDU
                     }
 
                     //if to the left of the obstacle, move left. otherwise, move right
-                    if (playerRect.X < platform.Transform.X)
+                    if (newPlayerTransform.X < platform.Transform.X)
                     {
-                        playerRect.X -= overlap.Width;
+                        newPlayerTransform.X -= overlap.Width;
                     }
                     else
                     {
-                        playerRect.X += overlap.Width;
+                        newPlayerTransform.X += overlap.Width;
                     }
                     intersections.RemoveAt(i);
                 }
@@ -320,7 +320,7 @@ namespace MEDU
             for (int i = intersections.Count - 1; i >= 0; i--)
             {
                 Platform platform = intersections[i];
-                Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+                Rectangle overlap = Rectangle.Intersect(platform.Transform, newPlayerTransform);
 
                 if (overlap.Height == 0)
                     continue;
@@ -330,11 +330,11 @@ namespace MEDU
                     //ignore pass-through collision when moving up
                     if (player.PlayerVelocity.Y < 0)
                         continue;
-                    //collide if the player is almost above the platform
-                    if (overlap.Bottom < platform.Transform.Center.Y)
+                    //collide if the player was above the platform (with leeway)
+                    if (oldPlayerTransform.Bottom < platform.Transform.Top + 5)
                     {
                         //keep the player slightly inside the platform so future collision checks work correctly
-                        playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
+                        newPlayerTransform.Y = platform.Transform.Top - newPlayerTransform.Height + 1;
                         player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
                         player.IsOnGround = true;
                     }
@@ -343,10 +343,10 @@ namespace MEDU
                 else
                 {
                     //if above the obstacle, move up. otherwise, move down
-                    if (playerRect.Y < platform.Transform.Y)
+                    if (newPlayerTransform.Y < platform.Transform.Y)
                     {
                         //keep the player slightly inside the platform so future collision checks work correctly
-                        playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
+                        newPlayerTransform.Y = platform.Transform.Top - newPlayerTransform.Height + 1;
 
                         //only hit the floor if moving down (or staying still)
                         if (player.PlayerVelocity.Y >= 0)
@@ -357,7 +357,7 @@ namespace MEDU
                     }
                     else
                     {
-                        playerRect.Y += overlap.Height;
+                        newPlayerTransform.Y += overlap.Height;
 
                         //only hit the ceiling if moving up (or staying still)
                         if(player.PlayerVelocity.Y <= 0)
@@ -366,7 +366,7 @@ namespace MEDU
                 }
             }
 
-            player.Transform = playerRect;
+            player.Transform = newPlayerTransform;
         }
 
         //private void ResolveCollisions()
