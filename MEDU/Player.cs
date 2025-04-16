@@ -71,7 +71,7 @@ namespace MEDU
             playerspeedX = Level.TILESIZE * 15;
             initialJumpVelocity = Level.TILESIZE * -28;
             gravity = Level.TILESIZE * 80;
-            coyoteTime = 0.25f;
+            coyoteTime = 0.1f;
         }
 
         public void Reset(Point position)
