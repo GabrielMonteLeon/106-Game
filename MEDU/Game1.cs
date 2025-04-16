@@ -85,6 +85,7 @@ namespace MEDU
 
         protected override void LoadContent()
         {
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
@@ -101,14 +102,14 @@ namespace MEDU
                     _graphics.PreferredBackBufferWidth / levelSelection.Length - 50,
                     _graphics.PreferredBackBufferHeight - 150);
                 // TODO: replace texture with something that depicts the level
-                levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
+                levelSelectTextures[i] = Content.Load<Texture2D>("LevelSelect");
             }
-            /*font = Content.Load<SpriteFont>("spritefont");
-            descriptionFont = Content.Load<SpriteFont>("DescriptionFont"); */
+            
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
             byteBounce = Content.Load<SpriteFont>("ByteBounce");
+            descriptionFont = byteBounce;
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
@@ -202,7 +203,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
                 case (MenuState.LevelSelect):
-                    _spriteBatch.DrawString(byteBounce, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
+                    _spriteBatch.DrawString(byteBounce, "LEVEL SELECTION", new Vector2(220, 20), Color.White);
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
                         Color color = Color.White;
@@ -216,25 +217,25 @@ namespace MEDU
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
-                    _spriteBatch.DrawString(font,
+                    _spriteBatch.DrawString(byteBounce,
                         time,
                         new Vector2(10, 20),
                         Color.Yellow);
-                    _spriteBatch.DrawString(descriptionFont,
+                    _spriteBatch.DrawString(byteBounce,
                         "press 'p' to pause game", 
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
                         Color.White);
                     break;
                 case (MenuState.Pause):
-                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(byteBounce, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
                         "press 'r' to continue.",
                         new Vector2(_graphics.PreferredBackBufferWidth / 2 - 80, _graphics.PreferredBackBufferHeight / 2 + 20),
                         Color.White); 
                     break;
                 case (MenuState.LevelComplete):
-                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
-                    _spriteBatch.DrawString(descriptionFont,
+                    _spriteBatch.DrawString(byteBounce, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(byteBounce,
                         "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 50, _graphics.PreferredBackBufferHeight/2 + 20),
                         Color.White);
