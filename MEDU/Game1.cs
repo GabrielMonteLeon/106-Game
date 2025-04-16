@@ -207,14 +207,14 @@ namespace MEDU
                         Color.White);
                     break;
                 case (MenuState.Pause):
-                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
                         "press 'r' to continue.",
-                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 50, _graphics.PreferredBackBufferHeight / 2 + 20),
+                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 80, _graphics.PreferredBackBufferHeight / 2 + 20),
                         Color.White); 
                     break;
                 case (MenuState.LevelComplete):
-                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 150, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
                         "click to continue.",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 50, _graphics.PreferredBackBufferHeight/2 + 20),
