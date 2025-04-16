@@ -81,6 +81,9 @@ namespace MEDU
             alive = true;
             facingRight = true;
             playerVelocity = Vector2.Zero;
+            extraJumps = 0;
+            currentJumps = 0;
+            extraWallJumps = 0;
         }
 
         public override void update(GameTime gameTime)
