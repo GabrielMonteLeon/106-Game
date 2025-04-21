@@ -207,7 +207,7 @@ namespace MEDU
                     break;
                 case (MenuState.LevelSelect):
 
-                    _spriteBatch.DrawString(byteBounce, "LEVEL SELECTION", new Vector2(220, 20), Color.White);
+                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(220, 20), Color.White);
 
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
@@ -233,7 +233,7 @@ namespace MEDU
                     break;
                 case (MenuState.Pause):
 
-                    _spriteBatch.DrawString(byteBounce, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
 
                     _spriteBatch.DrawString(descriptionFont,
                         "press 'r' to continue.",
@@ -241,7 +241,7 @@ namespace MEDU
                         Color.White); 
                     break;
                 case (MenuState.LevelComplete):
-                    _spriteBatch.DrawString(byteBounce, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(byteBounce,
                         "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 90, _graphics.PreferredBackBufferHeight/2 + 20),
