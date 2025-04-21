@@ -68,7 +68,7 @@ namespace MEDU
 
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
             End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 - 75,150, 150);
-            titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 3 - 50, 400, 200);
+            titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 150, GraphicsDevice.Viewport.Height / 2 - 200, 300, 300);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             backgroundRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             menuState = MenuState.Menu;
@@ -88,7 +88,7 @@ namespace MEDU
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
             Level.LoadAssets(Content);
-            levels = new Level[] { Level.LoadLevelFromFile("Content/Main Level.level") };
+            levels = new Level[] { Level.LoadLevelFromFile("Content/level1.level"), Level.LoadLevelFromFile("Content/level2.level") };
             levelSelection = new Rectangle[levels.Length];
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
@@ -119,9 +119,6 @@ namespace MEDU
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             //LevelTest.Update(gameTime);
             //return;
 
@@ -138,6 +135,8 @@ namespace MEDU
                     }
                     break;
                 case (MenuState.LevelSelect):
+                    GoToLevel(0);
+                    break;
                     int selectedLevel = 0;
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
@@ -149,7 +148,6 @@ namespace MEDU
                     if (select.Contains(ms.Position) && singleLeftClick(ms))
                     {
                         GoToLevel(selectedLevel);
-                        menuState = MenuState.Level;
                     }
                     break;
                 case (MenuState.Level):
@@ -175,13 +173,13 @@ namespace MEDU
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
                     {
-                        menuState = MenuState.Menu;
+                        GoToNextLevel();
                     }
                     break;
                 case (MenuState.LevelFailed):
                     if (End.Contains(ms.Position) && singleLeftClick(ms))
                     {
-                        menuState = MenuState.LevelSelect;
+                        GoToLevel(levelNum);
                     }
                     break;
             }
@@ -206,7 +204,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
                 case (MenuState.LevelSelect):
-
+                    break;
                     _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(220, 20), Color.White);
 
                     for (int i = 0; i < levelSelection.Length; i++)
@@ -236,7 +234,7 @@ namespace MEDU
                     _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
 
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'r' to continue.",
+                        "press 'r' to resume.",
                         new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 20),
                         Color.White); 
                     break;
@@ -266,6 +264,29 @@ namespace MEDU
             levelNum = level;
             player.Reset(currentLevel.PlayerStartPos);
             timer = 0;
+            menuState = MenuState.Level;
+            //add modifiers
+            switch(level)
+            {
+                case 0:
+                    player.ExtraJumps = 0;
+                    break;
+                case 1:
+                    player.ExtraJumps = 1;
+                    break;
+            }
+        }
+
+        public void GoToNextLevel()
+        {
+            if(levelNum < levels.Length - 1)
+            {
+                GoToLevel(levelNum + 1);
+            }
+            else
+            {
+                menuState = MenuState.Menu;
+            }
         }
 
         public void GoToMenu()

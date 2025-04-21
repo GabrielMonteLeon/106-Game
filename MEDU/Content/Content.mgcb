@@ -171,6 +171,12 @@
 /processorParam:TextureFormat=Color
 /build:Flag.png
 
+#begin level1.level
+/copy:level1.level
+
+#begin level2.level
+/copy:level2.level
+
 #begin LevelSelect.png
 /importer:TextureImporter
 /processor:TextureProcessor
