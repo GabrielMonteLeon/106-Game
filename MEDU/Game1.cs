@@ -32,6 +32,8 @@ namespace MEDU
         private Point cameraCenterOffset;
         private MouseState prevMsState;
         private KeyboardState prevkb;
+        private int coinCount;
+        private Texture2D coinTexture;
 
 
         //menu fields
@@ -107,6 +109,8 @@ namespace MEDU
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>($"LS{i+1}");
             }
+
+            coinTexture = Content.Load<Texture2D>("coin");
             
 
             title = Content.Load<Texture2D>("Title");
@@ -233,11 +237,18 @@ namespace MEDU
                 case (MenuState.Level):
                     _spriteBatch.Draw(background, backgroundRect, Color.White);
                     currentLevel.Draw(_spriteBatch, cameraPosition);
+                    // timer
                     String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
+                    // coin count
+                    _spriteBatch.Draw(coinTexture, new Rectangle(10, 8, 20, 20), Color.White);
+                    _spriteBatch.DrawString(byteBounce,
+                        $"{coinCount}/{currentLevel.Coins.Count}",
+                        new Vector2(32, 8),
+                        Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
                         time,
-                        new Vector2(10, 20),
+                        new Vector2(10, 25),
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
                         "press 'p' to pause game", 
@@ -298,6 +309,7 @@ namespace MEDU
 
         public void ResetCoins()
         {
+            coinCount = 0;
             foreach(Coin coin in currentLevel.Coins)
             {
                 coin.reset();
@@ -462,6 +474,7 @@ namespace MEDU
                 if (!coin.Collected&&coin.Transform.Intersects(player.Transform))
                 {
                     coin.collect();
+                    coinCount++;
                     //add other implementation here
                 }
             }
