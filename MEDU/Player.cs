@@ -194,7 +194,17 @@ namespace MEDU
                 spriteState = SpriteState.Walk;
             else
                 spriteState = SpriteState.Idle;
-            base.draw(spriteBatch, camPosition);
+            switch (facingRight)
+            {
+                case true:
+                    base.draw(spriteBatch, camPosition);
+                    break;
+                case false:
+                    Rectangle screenSpacePos = Transform;
+                    screenSpacePos.Offset(-camPosition);
+                    spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White, 0f, new Vector2(Transform.Width/2, Transform.Height/2), SpriteEffects.FlipHorizontally, 0f);
+                    break;
+            }
         }
     }
 }
