@@ -293,7 +293,7 @@ namespace MEDU
             sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
             sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
             sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("Flag"));
-            sprites[(int)SpriteID.Coin]          = new Sprite(content.Load<Texture2D>("coin"));
+            sprites[(int)SpriteID.Coin]          = new Sprite(content.Load<Texture2D>("Coin"));
 
         }
     }

@@ -32,7 +32,7 @@ namespace MEDU
             {
                 Rectangle screenSpacePos = Transform;
                 screenSpacePos.Offset(-camPosition);
-                spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White);
+                spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.LightYellow);
             }
         }
     }
