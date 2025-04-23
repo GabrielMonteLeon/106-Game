@@ -105,7 +105,7 @@ namespace MEDU
                     150,
                     150);
                 // TODO: replace texture with something that depicts the level
-                levelSelectTextures[i] = Content.Load<Texture2D>("LevelSelect");
+                levelSelectTextures[i] = Content.Load<Texture2D>($"LS{i+1}");
             }
             
 
