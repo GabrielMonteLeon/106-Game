@@ -57,6 +57,7 @@ namespace MEDU
             SolidTopLeft, SolidTopMid, SolidTopRight, 
             SolidMidLeft, SolidMidMid, SolidMidRight, 
             SolidBotLeft, SolidBotMid, SolidBotRight,
+            Coin
         }
 
         /// <summary>
@@ -220,7 +221,7 @@ namespace MEDU
                             }
                             break;
                         case 10://coin
-                            coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[1])); //change sprite once coin sprite is uploaded
+                            coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[17])); //change sprite once coin sprite is uploaded
                             goto case 0;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
@@ -274,7 +275,7 @@ namespace MEDU
         /// </summary>
         public static void LoadAssets(ContentManager content)
         {
-            sprites = new Sprite[17];
+            sprites = new Sprite[18];
             sprites[(int)SpriteID.Pixel]         = new Sprite(content.Load<Texture2D>("pixel"));
             sprites[(int)SpriteID.CloudLeft]     = new Sprite(content.Load<Texture2D>("CloudLeft"));
             sprites[(int)SpriteID.CloudMid]      = new Sprite(content.Load<Texture2D>("CloudMid"));
@@ -292,6 +293,8 @@ namespace MEDU
             sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
             sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
             sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("Flag"));
+            sprites[(int)SpriteID.Coin]          = new Sprite(content.Load<Texture2D>("coin"));
+
         }
     }
 }
