@@ -217,6 +217,7 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture, select, Color.White);
                     break;
                 case (MenuState.Level):
+                    _spriteBatch.Draw(background, backgroundRect, Color.White);
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
