@@ -51,13 +51,14 @@ namespace MEDU
         private static Sprite[] sprites;
         private enum SpriteID 
         { 
-            Pixel, Flag,
+            Pixel, Flag, Coin,
             CloudLeft, CloudMid, CloudRight, 
             DangerLeft, DangerMid, DangerRight,
             SolidTopLeft, SolidTopMid, SolidTopRight, 
             SolidMidLeft, SolidMidMid, SolidMidRight, 
             SolidBotLeft, SolidBotMid, SolidBotRight,
-            Coin
+            IceLeft, IceMid, IceRight,
+            MudLeft, MudMid, MudRight
         }
 
         /// <summary>
@@ -221,7 +222,7 @@ namespace MEDU
                             }
                             break;
                         case 10://coin
-                            coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[17])); //change sprite once coin sprite is uploaded
+                            coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[(int)SpriteID.Coin])); //change sprite once coin sprite is uploaded
                             goto case 0;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
@@ -275,26 +276,38 @@ namespace MEDU
         /// </summary>
         public static void LoadAssets(ContentManager content)
         {
-            sprites = new Sprite[18];
+            sprites = new Sprite[24];
             sprites[(int)SpriteID.Pixel]         = new Sprite(content.Load<Texture2D>("pixel"));
-            sprites[(int)SpriteID.CloudLeft]     = new Sprite(content.Load<Texture2D>("CloudLeft"));
-            sprites[(int)SpriteID.CloudMid]      = new Sprite(content.Load<Texture2D>("CloudMid"));
-            sprites[(int)SpriteID.CloudRight]    = new Sprite(content.Load<Texture2D>("CloudRight"));
-            sprites[(int)SpriteID.SolidTopLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidTopMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidTopRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidMidLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidMidMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidMidRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidBotLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidBotMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.SolidBotRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
-            sprites[(int)SpriteID.DangerLeft]    = new Sprite(content.Load<Texture2D>("DangerLeft"));
-            sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
-            sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
             sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("Flag"));
             sprites[(int)SpriteID.Coin]          = new Sprite(content.Load<Texture2D>("Coin"));
 
+            sprites[(int)SpriteID.CloudLeft]     = new Sprite(content.Load<Texture2D>("CloudLeft"));
+            sprites[(int)SpriteID.CloudMid]      = new Sprite(content.Load<Texture2D>("CloudMid"));
+            sprites[(int)SpriteID.CloudRight]    = new Sprite(content.Load<Texture2D>("CloudRight"));
+
+            sprites[(int)SpriteID.SolidTopLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidTopMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidTopRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+
+            sprites[(int)SpriteID.SolidMidLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidMidMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidMidRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+
+            sprites[(int)SpriteID.SolidBotLeft]  = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidBotMid]   = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+            sprites[(int)SpriteID.SolidBotRight] = new Sprite(content.Load<Texture2D>("SolidFull"), new Rectangle(16, 16, 16, 16));
+
+            sprites[(int)SpriteID.DangerLeft]    = new Sprite(content.Load<Texture2D>("DangerLeft"));
+            sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
+            sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
+
+            sprites[(int)SpriteID.IceLeft]       = new Sprite(content.Load<Texture2D>("DangerLeft"));
+            sprites[(int)SpriteID.IceMid]        = new Sprite(content.Load<Texture2D>("DangerMid"));
+            sprites[(int)SpriteID.IceRight]      = new Sprite(content.Load<Texture2D>("DangerRight"));
+
+            sprites[(int)SpriteID.MudLeft]       = new Sprite(content.Load<Texture2D>("SolidLeft"));
+            sprites[(int)SpriteID.MudMid]        = new Sprite(content.Load<Texture2D>("SolidMid"));
+            sprites[(int)SpriteID.MudRight]      = new Sprite(content.Load<Texture2D>("SolidRight"));
         }
     }
 }
