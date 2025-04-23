@@ -71,7 +71,7 @@ namespace MEDU
 
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
-            spriteBatch.Draw(sprites[(int)SpriteID.Flag].texture, screenSpaceEnd, Color.Green);
+            spriteBatch.Draw(sprites[(int)SpriteID.Flag].texture, screenSpaceEnd, Color.White);
 
             if (!debug)
                 return;
@@ -127,7 +127,7 @@ namespace MEDU
                             startPos = new Point(x * TILESIZE, y * TILESIZE);
                             goto case 0;
                         case 2: //level end
-                            endTrigger = new Rectangle(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE);
+                            endTrigger = new Rectangle(x * TILESIZE, (y-1) * TILESIZE, TILESIZE*2, TILESIZE*2);
                             goto case 0;
                         case 3: //passthrough platform
                             if (currentPlatformStart == -1) //if a platform is not yet being constructed
@@ -277,7 +277,7 @@ namespace MEDU
             sprites[(int)SpriteID.DangerLeft]    = new Sprite(content.Load<Texture2D>("DangerLeft"));
             sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
             sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
-            sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("pixel"));
+            sprites[(int)SpriteID.Flag]          = new Sprite(content.Load<Texture2D>("Flag"));
         }
     }
 }
