@@ -202,7 +202,7 @@ namespace MEDU
                 case false:
                     Rectangle screenSpacePos = Transform;
                     screenSpacePos.Offset(-camPosition);
-                    spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White, 0f, new Vector2(Transform.Width/2, Transform.Height/2), SpriteEffects.FlipHorizontally, 0f);
+                    spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White, 0f, new Vector2(0,0), SpriteEffects.FlipHorizontally, 0f);
                     break;
             }
         }
