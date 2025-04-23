@@ -31,6 +31,7 @@ namespace MEDU
         private MenuState menuState;
         private Point cameraCenterOffset;
         private MouseState prevMsState;
+        private KeyboardState prevkb;
 
 
         //menu fields
@@ -49,6 +50,7 @@ namespace MEDU
         private Rectangle[] levelSelection;
         private Texture2D[] levelSelectTextures;
         private Rectangle select;
+        private int selectedLevel;
 
         // font
         private SpriteFont font;
@@ -78,6 +80,7 @@ namespace MEDU
                 _graphics.PreferredBackBufferHeight - 75,
                 70,
                 70);
+            selectedLevel = -1;
             timer = 0;
         }
 
@@ -88,7 +91,9 @@ namespace MEDU
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
             Level.LoadAssets(Content);
-            levels = new Level[] { Level.LoadLevelFromFile("Content/level1.level"), Level.LoadLevelFromFile("Content/level2.level") };
+            levels = new Level[] { 
+                Level.LoadLevelFromFile("Content/level1.level"), 
+                Level.LoadLevelFromFile("Content/level2.level")};
             levelSelection = new Rectangle[levels.Length];
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
@@ -96,9 +101,9 @@ namespace MEDU
                 levels[i].Completed = false;
                 levelSelection[i] = new Rectangle(
                     i * _graphics.PreferredBackBufferWidth / levelSelection.Length + 25,
-                    70,
-                    _graphics.PreferredBackBufferWidth / levelSelection.Length - 50,
-                    _graphics.PreferredBackBufferHeight - 150);
+                    150,
+                    150,
+                    150);
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>("LevelSelect");
             }
@@ -124,6 +129,7 @@ namespace MEDU
 
             //mouse position
             MouseState ms = Mouse.GetState();
+            KeyboardState kb = Keyboard.GetState();
 
             //Basic finite state machine for going through basic game
             switch (menuState)
@@ -134,10 +140,8 @@ namespace MEDU
                         menuState = MenuState.LevelSelect;
                     }
                     break;
+
                 case (MenuState.LevelSelect):
-                    GoToLevel(0);
-                    break;
-                    int selectedLevel = 0;
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
                         if (levelSelection[i].Contains(ms.Position) && singleLeftClick(ms))
@@ -145,11 +149,12 @@ namespace MEDU
                             selectedLevel = i;
                         }
                     }
-                    if (select.Contains(ms.Position) && singleLeftClick(ms))
+                    if (select.Contains(ms.Position) && singleLeftClick(ms) && selectedLevel != -1)
                     {
                         GoToLevel(selectedLevel);
                     }
                     break;
+
                 case (MenuState.Level):
                     timer += gameTime.ElapsedGameTime.TotalSeconds;
                     player.update(gameTime);
@@ -163,19 +168,23 @@ namespace MEDU
                         currentLevel.Completed = true;
                         menuState = MenuState.LevelComplete;
                     }
-                    else if (Keyboard.GetState().IsKeyDown(Keys.P))
+                    else if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
                         menuState = MenuState.Pause;
                     break;
+
                 case (MenuState.Pause):
-                    if (Keyboard.GetState().IsKeyDown(Keys.R))
+                    if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
                         menuState = MenuState.Level; 
                     break;
+
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
                     {
-                        GoToNextLevel();
+                        menuState = MenuState.LevelSelect;
+                        selectedLevel = -1;
                     }
                     break;
+
                 case (MenuState.LevelFailed):
                     if (End.Contains(ms.Position) && singleLeftClick(ms))
                     {
@@ -184,6 +193,7 @@ namespace MEDU
                     break;
             }
             prevMsState = ms;
+            prevkb = kb;
             base.Update(gameTime);
         }
 
@@ -203,19 +213,23 @@ namespace MEDU
                     _spriteBatch.Draw(title, titleRect, Color.White);
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
-                case (MenuState.LevelSelect):
-                    break;
-                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(220, 20), Color.White);
 
+                case (MenuState.LevelSelect):
+                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(180, 20), Color.White);
                     for (int i = 0; i < levelSelection.Length; i++)
                     {
                         Color color = Color.White;
                         if (levels[i].Completed)
                             color = Color.Gray;
+                        if (levelSelection[i].Contains(Mouse.GetState().Position))
+                            color = Color.LightYellow;
+                        if (selectedLevel == i)
+                            color = Color.LightBlue;
                         _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], color);
                     }
                     _spriteBatch.Draw(start_texture, select, Color.White);
                     break;
+
                 case (MenuState.Level):
                     _spriteBatch.Draw(background, backgroundRect, Color.White);
                     currentLevel.Draw(_spriteBatch, cameraPosition);
@@ -230,22 +244,24 @@ namespace MEDU
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
                         Color.White);
                     break;
+
                 case (MenuState.Pause):
-
                     _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
-
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'r' to resume.",
+                        "press 'p' to resume.",
                         new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 20),
                         Color.White); 
                     break;
+
                 case (MenuState.LevelComplete):
                     _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(_graphics.PreferredBackBufferWidth/2 - 200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(byteBounce,
                         "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 90, _graphics.PreferredBackBufferHeight/2 + 20),
                         Color.White);
+                    selectedLevel = -1;
                     break;
+
                 case (MenuState.LevelFailed):
                     _spriteBatch.Draw(end_texture, End, Color.White);
                     ResetCoins();
