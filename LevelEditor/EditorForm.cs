@@ -59,9 +59,10 @@
         {
             InitializeComponent();
 
-            colorPalette = new Color[6];
-            paletteButtons = [pColor1, pColor2, pColor3, pColor4, pColor5, pColor6];
-            for (int i = 0; i < 6; i++)
+            int numColors = 8;
+            colorPalette = new Color[numColors];
+            paletteButtons = [pColor1, pColor2, pColor3, pColor4, pColor5, pColor6, pColor7, pColor8];
+            for (int i = 0; i < numColors; i++)
             {
                 colorPalette[i] = paletteButtons[i].BackColor;
             }
@@ -186,8 +187,12 @@
                 for (int y = 0; y < height; y++)
                 {
                     byte tileID = data[x * height + y];
-                    if (tileID > 5) //5-8 are all solid block variations
-                        tileID = 5;
+                    if (tileID > 5) //5-9 are all solid block variations
+                    {
+                        tileID -= 4;
+                        if (tileID < 5)
+                            tileID = 5;
+                    }
                     PaintTile(x, y, tileID, false);
                 }
             }
@@ -324,6 +329,11 @@
                                 tileID = 9;
                             }
                         }
+                        //tile 5 has 4 extra variants, so shift all future tiles
+                        else if(tileID > 5)
+                        {
+                            tileID += 4;
+                        }
                         writer.Write(tileID);
                         previousTile = tileID;
                     }
@@ -357,7 +367,7 @@
             int trueX = visualX + scrollX;
             int trueY = visualY + scrollY;
 
-            if (selectedColorIndex == 4)
+            if (selectedColorIndex == 8)
             {
                 if (selectStartX == -1)
                 {
@@ -407,7 +417,7 @@
             RecordCurrentAction(null!, null!);
 
             int colorIndex = -1;
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < paletteButtons.Length; i++)
             {
                 if (paletteButtons[i] == sender)
                 {

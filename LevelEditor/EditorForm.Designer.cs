@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             palletteGroup = new GroupBox();
+            pColor8 = new Button();
+            pColor7 = new Button();
             pColor6 = new Button();
             pColor5 = new Button();
             pColor4 = new Button();
@@ -65,6 +67,8 @@
             // 
             // palletteGroup
             // 
+            palletteGroup.Controls.Add(pColor8);
+            palletteGroup.Controls.Add(pColor7);
             palletteGroup.Controls.Add(pColor6);
             palletteGroup.Controls.Add(pColor5);
             palletteGroup.Controls.Add(pColor4);
@@ -73,10 +77,31 @@
             palletteGroup.Controls.Add(pColor1);
             palletteGroup.Location = new Point(21, 32);
             palletteGroup.Name = "palletteGroup";
-            palletteGroup.Size = new Size(95, 161);
+            palletteGroup.Size = new Size(95, 211);
             palletteGroup.TabIndex = 0;
             palletteGroup.TabStop = false;
             palletteGroup.Text = "Pallette";
+            // 
+            // pColor8
+            // 
+            pColor8.BackColor = Color.DarkGoldenrod;
+            pColor8.FlatStyle = FlatStyle.Flat;
+            pColor8.Location = new Point(47, 154);
+            pColor8.Name = "pColor8";
+            pColor8.Size = new Size(45, 45);
+            pColor8.TabIndex = 7;
+            pColor8.UseVisualStyleBackColor = false;
+            // 
+            // pColor7
+            // 
+            pColor7.BackColor = Color.Yellow;
+            pColor7.FlatStyle = FlatStyle.Flat;
+            pColor7.Location = new Point(3, 154);
+            pColor7.Name = "pColor7";
+            pColor7.Size = new Size(45, 45);
+            pColor7.TabIndex = 6;
+            pColor7.UseVisualStyleBackColor = false;
+            pColor7.Click += SelectColor;
             // 
             // pColor6
             // 
@@ -97,7 +122,6 @@
             pColor5.Name = "pColor5";
             pColor5.Size = new Size(45, 45);
             pColor5.TabIndex = 4;
-            pColor5.Text = "Move";
             pColor5.UseVisualStyleBackColor = false;
             pColor5.Click += SelectColor;
             // 
@@ -114,7 +138,7 @@
             // 
             // pColor3
             // 
-            pColor3.BackColor = Color.FromArgb(140, 90, 0);
+            pColor3.BackColor = Color.Olive;
             pColor3.FlatStyle = FlatStyle.Flat;
             pColor3.Location = new Point(3, 66);
             pColor3.Name = "pColor3";
@@ -272,55 +296,55 @@
             // 
             zoomToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem4, toolStripMenuItem5, toolStripMenuItem6, toolStripMenuItem7, toolStripMenuItem8 });
             zoomToolStripMenuItem.Name = "zoomToolStripMenuItem";
-            zoomToolStripMenuItem.Size = new Size(180, 22);
+            zoomToolStripMenuItem.Size = new Size(106, 22);
             zoomToolStripMenuItem.Text = "Zoom";
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(180, 22);
+            toolStripMenuItem2.Size = new Size(105, 22);
             toolStripMenuItem2.Text = "25%";
             toolStripMenuItem2.Click += AdjustZoom;
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(180, 22);
+            toolStripMenuItem3.Size = new Size(105, 22);
             toolStripMenuItem3.Text = "37.5%";
             toolStripMenuItem3.Click += AdjustZoom;
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(180, 22);
+            toolStripMenuItem4.Size = new Size(105, 22);
             toolStripMenuItem4.Text = "50%";
             toolStripMenuItem4.Click += AdjustZoom;
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(180, 22);
+            toolStripMenuItem5.Size = new Size(105, 22);
             toolStripMenuItem5.Text = "75%";
             toolStripMenuItem5.Click += AdjustZoom;
             // 
             // toolStripMenuItem6
             // 
             toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new Size(180, 22);
+            toolStripMenuItem6.Size = new Size(105, 22);
             toolStripMenuItem6.Text = "100%";
             toolStripMenuItem6.Click += AdjustZoom;
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.Size = new Size(180, 22);
+            toolStripMenuItem7.Size = new Size(105, 22);
             toolStripMenuItem7.Text = "150%";
             toolStripMenuItem7.Click += AdjustZoom;
             // 
             // toolStripMenuItem8
             // 
             toolStripMenuItem8.Name = "toolStripMenuItem8";
-            toolStripMenuItem8.Size = new Size(180, 22);
+            toolStripMenuItem8.Size = new Size(105, 22);
             toolStripMenuItem8.Text = "200%";
             toolStripMenuItem8.Click += AdjustZoom;
             // 
@@ -379,5 +403,7 @@
         private ToolStripMenuItem toolStripMenuItem6;
         private ToolStripMenuItem toolStripMenuItem7;
         private ToolStripMenuItem toolStripMenuItem8;
+        private Button pColor7;
+        private Button pColor8;
     }
 }
