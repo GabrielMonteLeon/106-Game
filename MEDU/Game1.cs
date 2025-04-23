@@ -247,6 +247,7 @@ namespace MEDU
                     break;
                 case (MenuState.LevelFailed):
                     _spriteBatch.Draw(end_texture, End, Color.White);
+                    ResetCoins();
                     break;
             }
 
@@ -261,6 +262,7 @@ namespace MEDU
         public void GoToLevel(int level)
         {
             currentLevel = levels[level];
+            ResetCoins();
             levelNum = level;
             player.Reset(currentLevel.PlayerStartPos);
             timer = 0;
@@ -274,6 +276,14 @@ namespace MEDU
                 case 1:
                     player.ExtraJumps = 1;
                     break;
+            }
+        }
+
+        public void ResetCoins()
+        {
+            foreach(Coin coin in currentLevel.Coins)
+            {
+                coin.reset();
             }
         }
 
@@ -319,6 +329,7 @@ namespace MEDU
 
             //Check collisions
             List<Platform> objects = currentLevel.Platforms;
+            List<Coin> coins = currentLevel.Coins;
             List<Platform> intersections = new List<Platform>();
             foreach (Platform platform in objects)
             {
@@ -428,8 +439,15 @@ namespace MEDU
                     }
                 }
             }
-
             player.Transform = newPlayerTransform;
+            foreach (Coin coin in coins)
+            {
+                if (!coin.Collected&&coin.Transform.Intersects(player.Transform))
+                {
+                    coin.collect();
+                    //add other implementation here
+                }
+            }
         }
 
         //private void ResolveCollisions()

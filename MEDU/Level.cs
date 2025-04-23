@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace MEDU
     {
         //fields
         private List<Platform> platforms;
+        private List<Coin> coins;
         private Point playerStartPos;
         private Rectangle endTrigger;
         private int deathPlaneY;
@@ -22,6 +24,10 @@ namespace MEDU
         /// List of all platforms in the level.
         /// </summary>
         public List<Platform> Platforms => platforms;
+        /// <summary>
+        /// List of all platforms in the level.
+        /// </summary>
+        public List<Coin> Coins => coins;
         /// <summary>
         /// Location where player spawns.
         /// </summary>
@@ -56,9 +62,10 @@ namespace MEDU
         /// <summary>
         /// Creates a new level from specific data. 
         /// </summary>
-        public Level(List<Platform> platforms, Point playerStartPos, Rectangle endTrigger, int deathPlaneY)
+        public Level(List<Platform> platforms,List<Coin> coins, Point playerStartPos, Rectangle endTrigger, int deathPlaneY)
         {
             this.platforms = platforms;
+            this.coins = coins;
             this.playerStartPos = playerStartPos;
             this.endTrigger = endTrigger;
             this.deathPlaneY = deathPlaneY;
@@ -68,7 +75,10 @@ namespace MEDU
         {
             foreach (Platform platform in platforms)
                 platform.draw(spriteBatch, cameraOffset);
-
+            foreach (Coin coin in coins)
+            {
+                coin.draw(spriteBatch, cameraOffset);
+            }
             Rectangle screenSpaceEnd = endTrigger;
             screenSpaceEnd.Offset(-cameraOffset);
             spriteBatch.Draw(sprites[(int)SpriteID.Flag].texture, screenSpaceEnd, Color.White);
@@ -102,6 +112,7 @@ namespace MEDU
             reader.Close();
 
             List<Platform> platforms = new List<Platform>();
+            List<Coin> coins = new List<Coin>();
             Point startPos = new Point(-1, -1);
             Rectangle endTrigger = new Rectangle(-1, -1, -1, -1);
 
@@ -208,6 +219,9 @@ namespace MEDU
                                 currentPlatformType = 1;
                             }
                             break;
+                        case 10://coin
+                            coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[1])); //change sprite once coin sprite is uploaded
+                            goto case 0;
                         default:
                             System.Diagnostics.Debug.WriteLine($"Warning: Found invalid tile {data[dataIndex]} at coordinate ({x}, {y}).");
                             goto case 0;
@@ -224,7 +238,7 @@ namespace MEDU
                 System.Diagnostics.Debug.WriteLine("Warning: Start Pos not defined");
             if (endTrigger.X < 0)
                 System.Diagnostics.Debug.WriteLine("Warning: End Trigger not defined");
-            return new Level(platforms, startPos, endTrigger, height * TILESIZE);
+            return new Level(platforms, coins, startPos, endTrigger, height * TILESIZE);
 
             //I might refactor this in the future since it feels a bit janky, but it works for now
             void CreatePlatform(int startX, int endX, int y, int platformType)
