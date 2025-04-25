@@ -57,8 +57,8 @@ namespace MEDU
             SolidTopLeft, SolidTopMid, SolidTopRight, 
             SolidMidLeft, SolidMidMid, SolidMidRight, 
             SolidBotLeft, SolidBotMid, SolidBotRight,
+            MudLeft, MudMid, MudRight,
             IceLeft, IceMid, IceRight,
-            MudLeft, MudMid, MudRight
         }
 
         /// <summary>
@@ -221,6 +221,32 @@ namespace MEDU
                                 currentPlatformType = 1;
                             }
                             break;
+                        case 11: //mud
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 5;
+                            }
+                            else if (currentPlatformType != 5) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 5;
+                            }
+                            break;
+                        case 12: //ice
+                            if (currentPlatformStart == -1) //if a platform is not yet being constructed
+                            {
+                                currentPlatformStart = x;
+                                currentPlatformType = 6;
+                            }
+                            else if (currentPlatformType != 6) //if the platform being constructed is a different type
+                            {
+                                CreatePlatform(currentPlatformStart, x, y, currentPlatformType);
+                                currentPlatformStart = x;
+                                currentPlatformType = 6;
+                            }
+                            break;
                         case 10://coin
                             coins.Add(new Coin(new Rectangle(x*TILESIZE,y*TILESIZE, TILESIZE,TILESIZE), sprites[(int)SpriteID.Coin])); //change sprite once coin sprite is uploaded
                             goto case 0;
@@ -254,7 +280,9 @@ namespace MEDU
                     2 => false, //solid top
                     3 => false, //solid mid
                     4 => false, //solid bottom
-                    _ => true
+                    5 => false, //mud
+                    6 => false, //ice
+                    _ => false
                 };
                 bool isSafe = platformType switch
                 {
@@ -263,6 +291,8 @@ namespace MEDU
                     2 => true, //solid top
                     3 => true, //solid mid
                     4 => true, //solid bottom
+                    5 => true, //mud
+                    6 => true, //ice
                     _ => true
                 };
                 platforms.Add(new Platform(
@@ -301,13 +331,13 @@ namespace MEDU
             sprites[(int)SpriteID.DangerMid]     = new Sprite(content.Load<Texture2D>("DangerMid"));
             sprites[(int)SpriteID.DangerRight]   = new Sprite(content.Load<Texture2D>("DangerRight"));
 
-            sprites[(int)SpriteID.IceLeft]       = new Sprite(content.Load<Texture2D>("DangerLeft"));
-            sprites[(int)SpriteID.IceMid]        = new Sprite(content.Load<Texture2D>("DangerMid"));
-            sprites[(int)SpriteID.IceRight]      = new Sprite(content.Load<Texture2D>("DangerRight"));
+            sprites[(int)SpriteID.MudLeft]       = new Sprite(content.Load<Texture2D>("Mud"));
+            sprites[(int)SpriteID.MudMid]        = new Sprite(content.Load<Texture2D>("Mud"));
+            sprites[(int)SpriteID.MudRight]      = new Sprite(content.Load<Texture2D>("Mud"));
 
-            sprites[(int)SpriteID.MudLeft]       = new Sprite(content.Load<Texture2D>("SolidLeft"));
-            sprites[(int)SpriteID.MudMid]        = new Sprite(content.Load<Texture2D>("SolidMid"));
-            sprites[(int)SpriteID.MudRight]      = new Sprite(content.Load<Texture2D>("SolidRight"));
+            sprites[(int)SpriteID.IceLeft]       = new Sprite(content.Load<Texture2D>("Ice"));
+            sprites[(int)SpriteID.IceMid]        = new Sprite(content.Load<Texture2D>("Ice"));
+            sprites[(int)SpriteID.IceRight]      = new Sprite(content.Load<Texture2D>("Ice"));
         }
     }
 }

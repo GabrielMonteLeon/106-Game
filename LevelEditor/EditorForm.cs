@@ -59,9 +59,9 @@
         {
             InitializeComponent();
 
-            int numColors = 8;
+            paletteButtons = [pColor1, pColor2, pColor3, pColor4, pColor5, pColor6, pColor7, pColor8, pColor9];
+            int numColors = paletteButtons.Length;
             colorPalette = new Color[numColors];
-            paletteButtons = [pColor1, pColor2, pColor3, pColor4, pColor5, pColor6, pColor7, pColor8];
             for (int i = 0; i < numColors; i++)
             {
                 colorPalette[i] = paletteButtons[i].BackColor;
@@ -367,7 +367,7 @@
             int trueX = visualX + scrollX;
             int trueY = visualY + scrollY;
 
-            if (selectedColorIndex == 8)
+            if (selectedColorIndex == -1) //currently disabled
             {
                 if (selectStartX == -1)
                 {

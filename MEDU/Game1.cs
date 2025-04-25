@@ -12,6 +12,7 @@ namespace MEDU
     {
         Menu,
         LevelSelect,
+        PreLevel,
         Level,
         LevelFailed,
         LevelComplete,
@@ -34,6 +35,7 @@ namespace MEDU
         private KeyboardState prevkb;
         private int coinCount;
         private Texture2D coinTexture;
+        private Texture2D clockTexture;
 
 
         //menu fields
@@ -95,7 +97,8 @@ namespace MEDU
             Level.LoadAssets(Content);
             levels = new Level[] { 
                 Level.LoadLevelFromFile("Content/level1.level"), 
-                Level.LoadLevelFromFile("Content/level2.level")};
+                Level.LoadLevelFromFile("Content/level2.level"),
+                Level.LoadLevelFromFile("Content/level3.level")};
             levelSelection = new Rectangle[levels.Length];
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
@@ -111,7 +114,8 @@ namespace MEDU
             }
 
             coinTexture = Content.Load<Texture2D>("coin");
-            
+            clockTexture = Content.Load<Texture2D>("Clock");
+
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
@@ -155,6 +159,13 @@ namespace MEDU
                     }
                     if (select.Contains(ms.Position) && singleLeftClick(ms) && selectedLevel != -1)
                     {
+                        menuState = MenuState.PreLevel;
+                    }
+                    break;
+
+                case (MenuState.PreLevel):
+                    if (singleLeftClick(ms))
+                    {
                         GoToLevel(selectedLevel);
                     }
                     break;
@@ -172,14 +183,16 @@ namespace MEDU
                         currentLevel.Completed = true;
                         menuState = MenuState.LevelComplete;
                     }
-                    else if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
+                    else if (kb.IsKeyDown(Keys.Escape) && prevkb.IsKeyUp(Keys.Escape))
                         menuState = MenuState.Pause;
                     break;
 
                 case (MenuState.Pause):
-                    if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
-                        menuState = MenuState.Level; 
-                    break;
+                    if (kb.IsKeyDown(Keys.R) && prevkb.IsKeyUp(Keys.R))
+                        menuState = MenuState.Level;
+                    if (kb.IsKeyDown(Keys.Escape) && prevkb.IsKeyUp(Keys.Escape))
+                        menuState = MenuState.Menu;
+                        break;
 
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
@@ -234,10 +247,15 @@ namespace MEDU
                     _spriteBatch.Draw(start_texture, select, Color.White);
                     break;
 
+                case (MenuState.PreLevel):
+                    _spriteBatch.DrawString(font, "INSERT JOKE HERE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    break;
+
                 case (MenuState.Level):
                     _spriteBatch.Draw(background, backgroundRect, Color.White);
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     // timer
+                    _spriteBatch.Draw(clockTexture, new Rectangle(10, 25, 20, 20), Color.White);
                     String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
                     // coin count
@@ -248,10 +266,10 @@ namespace MEDU
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
                         time,
-                        new Vector2(10, 25),
+                        new Vector2(32, 25),
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
-                        "press 'p' to pause game", 
+                        "press escape to pause game", 
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
                         Color.White);
                     break;
@@ -259,9 +277,13 @@ namespace MEDU
                 case (MenuState.Pause):
                     _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'p' to resume.",
+                        "press 'r' to resume.",
                         new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 20),
-                        Color.White); 
+                        Color.White);
+                    _spriteBatch.DrawString(descriptionFont,
+                        "press escape to go to menu.",
+                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 40),
+                        Color.White);
                     break;
 
                 case (MenuState.LevelComplete):
@@ -301,6 +323,7 @@ namespace MEDU
             switch(level)
             {
                 case 0:
+                case 2:
                     player.ExtraJumps = 0;
                     break;
                 case 1:

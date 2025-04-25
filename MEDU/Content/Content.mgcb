@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:CharacterRight.png
 
+#begin Clock.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Clock.png
+
 #begin CloudLeft.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -200,6 +212,9 @@
 
 #begin level2.level
 /copy:level2.level
+
+#begin level3.level
+/copy:level3.level
 
 #begin LevelSelect.png
 /importer:TextureImporter
@@ -441,4 +456,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:TitleCard.png
+
+#begin TombStone.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:TombStone.png
 
