@@ -21,6 +21,7 @@ namespace MEDU
         private double animationTimer;
         private bool alive;
         private float coyoteTimer;
+        private float mudTimer;
         private int extraJumps;
         private int currentJumps;
         private int extraWallJumps;
@@ -37,6 +38,7 @@ namespace MEDU
         private const float INITIALJUMPVEL = Level.TILESIZE * -28;
         private const float GRAVITY = Level.TILESIZE * 80;
         private const float COYOTETIME = 0.1f;
+        private const float MUDCOYOTETIME = 0.08f;
 
 
         // properties
@@ -134,6 +136,7 @@ namespace MEDU
                         playerVelocity.X = 0;
                 }
             }
+
             if (IsOnGround)
             {
                 currentJumps = 0;
@@ -144,12 +147,21 @@ namespace MEDU
             {
                 coyoteTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
+
+            if(SpecialTerrainType != Platform.PlatformType.Mud)
+            {
+                mudTimer = MUDCOYOTETIME;
+            }
+            else
+            {
+                mudTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
             if (kb.IsKeyDown(Keys.Space) && prevKb.IsKeyUp(Keys.Space))
             {
                 if (coyoteTimer > 0)
                 {
                     playerVelocity.Y = INITIALJUMPVEL;
-                    if (SpecialTerrainType == Platform.PlatformType.Mud)
+                    if (SpecialTerrainType == Platform.PlatformType.Mud && mudTimer <= 0)
                         playerVelocity.Y *= 0.7f;
                     IsOnGround = false;
                     coyoteTimer = 0;
