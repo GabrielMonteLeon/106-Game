@@ -81,8 +81,8 @@ namespace MEDU
             this.playerStartPos = playerStartPos;
             this.endTrigger = endTrigger;
             this.deathPlaneY = deathPlaneY;
-            Goal = EndGoal.normal; //temporary for testing
-            LevelTimer = 10;
+            Goal = EndGoal.normal;
+            LevelTimer = 0;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraOffset, bool debug = false)
