@@ -10,20 +10,19 @@ namespace MEDU
 {
     internal class Platform : GameObject
     {
-        private bool passThrough;
-        private bool isSafe;
+        public enum PlatformType { Cloud, Lava, SolidTop, SolidMid, SolidBot, Mud, Ice }
         private Sprite leftTexture;
         private Sprite rightTexture;
+        public PlatformType Type { get; }
 
-        public bool PassThrough => passThrough;
-        public bool IsSafe => isSafe;
+        public bool PassThrough => Type == PlatformType.Cloud;
+        public bool IsSafe => Type != PlatformType.Lava;
 
-        public Platform(Rectangle position, Sprite midTexture, Sprite leftTexture, Sprite rightTexture, bool passThrough, bool isSafe) : base(position, midTexture)
+        public Platform(Rectangle position, Sprite midTexture, Sprite leftTexture, Sprite rightTexture, PlatformType type) : base(position, midTexture)
         {
-            this.passThrough = passThrough;
-            this.isSafe = isSafe;
             this.leftTexture = leftTexture;
             this.rightTexture = rightTexture;
+            Type = type;
         }
 
         public override void draw(SpriteBatch spriteBatch, Vector2 camPosition)

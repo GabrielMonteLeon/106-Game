@@ -49,6 +49,11 @@ namespace MEDU
         private Rectangle titleRect;
         private Texture2D background;
         private Rectangle backgroundRect;
+        private List<string> jokes;
+
+        //end screen
+        private Texture2D tombstone;
+        private Rectangle tombstoneRect;
 
         //level select fields
         private Rectangle[] levelSelection;
@@ -61,6 +66,8 @@ namespace MEDU
         private SpriteFont descriptionFont;
         private SpriteFont byteBounce;
 
+        
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -72,11 +79,14 @@ namespace MEDU
         {
             base.Initialize();
 
+            //rectangles
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
             End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height/2 + 50,150, 150);
             titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 150, GraphicsDevice.Viewport.Height / 2 - 200, 300, 300);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             backgroundRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            tombstoneRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 -100, 150, 150);
+
             menuState = MenuState.Menu;
             player = new Player(new Rectangle(10,10,Level.TILESIZE,Level.TILESIZE*2), Content.Load<Texture2D>("CharacterRight"));
             select = new Rectangle(
@@ -111,6 +121,8 @@ namespace MEDU
                     125);
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>($"LS{i+1}");
+                jokes = new List<string>();
+                LoadJokes();
             }
 
             coinTexture = Content.Load<Texture2D>("coin");
@@ -119,12 +131,16 @@ namespace MEDU
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
+            tombstone = Content.Load<Texture2D>("TombStone");
 
             byteBounce = Content.Load<SpriteFont>("ByteBounce");
             descriptionFont = byteBounce;
 
             font = Content.Load<SpriteFont>("spritefont");
             descriptionFont = Content.Load<SpriteFont>("ByteBounce");
+
+            
+
 
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
@@ -255,7 +271,9 @@ namespace MEDU
                     break;
 
                 case (MenuState.PreLevel):
-                    _spriteBatch.DrawString(font, "INSERT JOKE HERE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    
+                    _spriteBatch.DrawString(font, jokes[selectedLevel], new Vector2(180, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    _spriteBatch.DrawString(byteBounce, "Click to Continue", new Vector2(_graphics.PreferredBackBufferWidth/2 -75, _graphics.PreferredBackBufferHeight - 20), Color.White);
                     break;
 
                 case (MenuState.Level):
@@ -309,7 +327,8 @@ namespace MEDU
                 case (MenuState.LevelFailed):
 
                     _spriteBatch.Draw(background, backgroundRect, Color.Red);
-                    _spriteBatch.Draw(end_texture, End, Color.DarkGray);
+                    _spriteBatch.Draw(end_texture, End, Color.DarkMagenta);
+                    _spriteBatch.Draw(tombstone,tombstoneRect, Color.Red);
                     ResetCoins();
                     break;
             }
@@ -387,7 +406,9 @@ namespace MEDU
             Rectangle oldPlayerTransform = player.Transform;
             Rectangle newPlayerTransform = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
+            Platform.PlatformType prevTerrain = player.SpecialTerrainType;
             player.IsOnGround = false;
+            player.SpecialTerrainType = Platform.PlatformType.Cloud;
             player.IsOnLeftWall = false;
             player.IsOnRightWall = false;
             //Move player with velocity
@@ -409,6 +430,14 @@ namespace MEDU
                     //implement code for player dying
                     player.IsAlive = false;
                     return;
+                }
+                else if(platform.Type == Platform.PlatformType.Mud)
+                {
+                    player.SpecialTerrainType = Platform.PlatformType.Mud;
+                }
+                else if(platform.Type == Platform.PlatformType.Ice && player.SpecialTerrainType != Platform.PlatformType.Mud)
+                {
+                    player.SpecialTerrainType = Platform.PlatformType.Ice;
                 }
 
                 //Record the intersection to process it later.
@@ -447,10 +476,14 @@ namespace MEDU
                     if (newPlayerTransform.X < platform.Transform.X)
                     {
                         newPlayerTransform.X -= overlap.Width;
+                        if (player.PlayerVelocity.X > 0)
+                            player.PlayerVelocity = new Vector2(0, player.PlayerVelocity.Y);
                     }
                     else
                     {
                         newPlayerTransform.X += overlap.Width;
+                        if (player.PlayerVelocity.X < 0)
+                            player.PlayerVelocity = new Vector2(0, player.PlayerVelocity.Y);
                     }
                     intersections.RemoveAt(i);
                 }
@@ -505,6 +538,11 @@ namespace MEDU
                     }
                 }
             }
+
+            //bandaid fix so mud works with coyote time
+            if (!player.IsOnGround && prevTerrain == Platform.PlatformType.Mud)
+                player.SpecialTerrainType = Platform.PlatformType.Mud;
+
             player.Transform = newPlayerTransform;
             foreach (Coin coin in coins)
             {
@@ -525,6 +563,13 @@ namespace MEDU
         public bool singleLeftClick(MouseState ms)
         {
             return ms.LeftButton == ButtonState.Pressed && prevMsState.LeftButton != ButtonState.Pressed;
+        }
+
+        public void LoadJokes()
+        {
+            jokes.Add("Today Feels Basic");
+            jokes.Add("Today Feels Light");
+            jokes.Add("Today Feels Elemental");
         }
     }
 }

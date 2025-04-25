@@ -285,31 +285,9 @@ namespace MEDU
             {
                 int baseSpriteIndex = (int)SpriteID.CloudLeft;
                 int typeOffset = platformType * 3;
-                bool passThrough = platformType switch
-                {
-                    0 => true, //normal passthrough
-                    1 => false, //dangerous
-                    2 => false, //solid top
-                    3 => false, //solid mid
-                    4 => false, //solid bottom
-                    5 => false, //mud
-                    6 => false, //ice
-                    _ => false
-                };
-                bool isSafe = platformType switch
-                {
-                    0 => true, //normal passthrough
-                    1 => false, //dangerous
-                    2 => true, //solid top
-                    3 => true, //solid mid
-                    4 => true, //solid bottom
-                    5 => true, //mud
-                    6 => true, //ice
-                    _ => true
-                };
                 platforms.Add(new Platform(
                     new Rectangle(startX * TILESIZE, y * TILESIZE, (endX - startX) * TILESIZE, TILESIZE),
-                    sprites[baseSpriteIndex + typeOffset + 1], sprites[baseSpriteIndex + typeOffset], sprites[baseSpriteIndex + typeOffset + 2], passThrough, isSafe));
+                    sprites[baseSpriteIndex + typeOffset + 1], sprites[baseSpriteIndex + typeOffset], sprites[baseSpriteIndex + typeOffset + 2], (Platform.PlatformType)platformType));
             }
         }
 

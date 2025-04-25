@@ -32,10 +32,11 @@ namespace MEDU
         private Vector2 playerVelocity;
 
         // edit these to adjust speeds
-        private float playerspeedX;
-        private float initialJumpVelocity;
-        private float gravity;
-        private float coyoteTime;
+        private const float PLAYERSPEED = Level.TILESIZE * 15;
+        private const float PLAYERACCEL = Level.TILESIZE * 300;
+        private const float INITIALJUMPVEL = Level.TILESIZE * -28;
+        private const float GRAVITY = Level.TILESIZE * 80;
+        private const float COYOTETIME = 0.1f;
 
 
         // properties
@@ -49,6 +50,7 @@ namespace MEDU
         /// </summary>
         public Vector2 PlayerVelocity { get => playerVelocity; set => playerVelocity = value; }
         public bool IsOnGround { get; set; }
+        public Platform.PlatformType SpecialTerrainType { get; set; }
         public bool IsOnRightWall { get; set; }
         public bool IsOnLeftWall { get; set; }
 
@@ -66,12 +68,6 @@ namespace MEDU
             extraWallJumps = 0;
             currentWallJumps = 0;
             playerVelocity = new Vector2(0, 0);
-
-            // edit these values to adjust speed
-            playerspeedX = Level.TILESIZE * 15;
-            initialJumpVelocity = Level.TILESIZE * -28;
-            gravity = Level.TILESIZE * 80;
-            coyoteTime = 0.1f;
         }
 
         public void Reset(Point position)
@@ -89,7 +85,6 @@ namespace MEDU
         public override void update(GameTime gameTime)
         {
             KeyboardState kb = Keyboard.GetState();
-            
             //DOUBLE JUMP TESTER REMOVE IN FINAL VERSION
             if (kb.IsKeyDown(Keys.J))
             {
@@ -105,44 +100,45 @@ namespace MEDU
             {
                 extraJumps = 10000000;
             }
-            if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left))
+
+            float accelValue = PLAYERACCEL * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (SpecialTerrainType == Platform.PlatformType.Ice)
+                accelValue *= 0.2f;
+            if (kb.IsKeyDown(Keys.A) || kb.IsKeyDown(Keys.Left)) //walking left
             {
-                playerVelocity.X = -playerspeedX;
+                playerVelocity.X -= accelValue;
+                if (playerVelocity.X < -PLAYERSPEED)
+                    playerVelocity.X = -PLAYERSPEED;
                 facingRight = false;
             }
-            else if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right))
+            else if (kb.IsKeyDown(Keys.D) || kb.IsKeyDown(Keys.Right)) //walking right
             {
-                playerVelocity.X = playerspeedX;
+                playerVelocity.X += accelValue;
+                if (playerVelocity.X > PLAYERSPEED)
+                    playerVelocity.X = PLAYERSPEED;
                 facingRight = true;
             }
-            else
+            else //idling
             {
-                float adjust;
-                switch (playerspeedX)
+                accelValue *= 0.5f;
+                if(playerVelocity.X > 0)
                 {
-                    case > 0:
-                        adjust = playerVelocity.X - 100;
-                        playerVelocity.X = adjust;
-                        if (playerVelocity.X < 0)
-                        {
-                            playerVelocity.X = 0;
-                        }
-                        break;
-                    case < 0:
-                        adjust = playerVelocity.X+100;
-                        playerVelocity.X = adjust;
-                        if (playerVelocity.X > 0)
-                        {
-                            playerVelocity.X = 0;
-                        }
-                        break;
+                    playerVelocity.X -= accelValue;
+                    if (playerVelocity.X < 0)
+                        playerVelocity.X = 0;
+                }
+                else if(playerVelocity.X < 0)
+                {
+                    playerVelocity.X += accelValue;
+                    if (playerVelocity.X > 0)
+                        playerVelocity.X = 0;
                 }
             }
             if (IsOnGround)
             {
                 currentJumps = 0;
                 currentWallJumps = 0;
-                coyoteTimer = coyoteTime;
+                coyoteTimer = COYOTETIME;
             }
             else
             {
@@ -152,14 +148,16 @@ namespace MEDU
             {
                 if (coyoteTimer > 0)
                 {
-                    playerVelocity.Y = initialJumpVelocity;
+                    playerVelocity.Y = INITIALJUMPVEL;
+                    if (SpecialTerrainType == Platform.PlatformType.Mud)
+                        playerVelocity.Y *= 0.7f;
                     IsOnGround = false;
                     coyoteTimer = 0;
                 }
                 else if (extraJumps>currentJumps)
                 {
                     currentJumps++;
-                    playerVelocity.Y = initialJumpVelocity;
+                    playerVelocity.Y = INITIALJUMPVEL;
                     IsOnGround = false;
                 }
                 else if (extraWallJumps > currentWallJumps)
@@ -180,7 +178,7 @@ namespace MEDU
                     }
                 }
             }
-            playerVelocity.Y += gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            playerVelocity.Y += GRAVITY * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // tracks kb state for next frame
             prevKb = kb;
         }
