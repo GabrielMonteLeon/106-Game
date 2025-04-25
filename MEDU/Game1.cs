@@ -388,7 +388,9 @@ namespace MEDU
             Rectangle oldPlayerTransform = player.Transform;
             Rectangle newPlayerTransform = player.Transform;
             //if we don't detect ground collision, IsOnGround will default to false
+            Platform.PlatformType prevTerrain = player.SpecialTerrainType;
             player.IsOnGround = false;
+            player.SpecialTerrainType = Platform.PlatformType.Cloud;
             player.IsOnLeftWall = false;
             player.IsOnRightWall = false;
             //Move player with velocity
@@ -410,6 +412,14 @@ namespace MEDU
                     //implement code for player dying
                     player.IsAlive = false;
                     return;
+                }
+                else if(platform.Type == Platform.PlatformType.Mud)
+                {
+                    player.SpecialTerrainType = Platform.PlatformType.Mud;
+                }
+                else if(platform.Type == Platform.PlatformType.Ice && player.SpecialTerrainType != Platform.PlatformType.Mud)
+                {
+                    player.SpecialTerrainType = Platform.PlatformType.Ice;
                 }
 
                 //Record the intersection to process it later.
@@ -448,10 +458,14 @@ namespace MEDU
                     if (newPlayerTransform.X < platform.Transform.X)
                     {
                         newPlayerTransform.X -= overlap.Width;
+                        if (player.PlayerVelocity.X > 0)
+                            player.PlayerVelocity = new Vector2(0, player.PlayerVelocity.Y);
                     }
                     else
                     {
                         newPlayerTransform.X += overlap.Width;
+                        if (player.PlayerVelocity.X < 0)
+                            player.PlayerVelocity = new Vector2(0, player.PlayerVelocity.Y);
                     }
                     intersections.RemoveAt(i);
                 }
@@ -506,6 +520,11 @@ namespace MEDU
                     }
                 }
             }
+
+            //bandaid fix so mud works with coyote time
+            if (!player.IsOnGround && prevTerrain == Platform.PlatformType.Mud)
+                player.SpecialTerrainType = Platform.PlatformType.Mud;
+
             player.Transform = newPlayerTransform;
             foreach (Coin coin in coins)
             {
