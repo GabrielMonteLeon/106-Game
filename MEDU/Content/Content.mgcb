@@ -195,6 +195,18 @@
 /processorParam:TextureFormat=Color
 /build:Flag.png
 
+#begin goback.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:goback.png
+
 #begin Ice.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -212,6 +224,9 @@
 
 #begin level2.level
 /copy:level2.level
+
+#begin level2C.level
+/copy:level2C.level
 
 #begin level3.level
 /copy:level3.level
@@ -326,6 +341,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:pixel.png
+
+#begin retry.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:retry.png
 
 #begin SolidBottomLeft.png
 /importer:TextureImporter
