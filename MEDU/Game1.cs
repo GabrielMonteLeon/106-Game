@@ -327,8 +327,8 @@ namespace MEDU
                 case (MenuState.LevelFailed):
 
                     _spriteBatch.Draw(background, backgroundRect, Color.Red);
-                    _spriteBatch.Draw(end_texture, End, Color.DarkMagenta);
-                    _spriteBatch.Draw(tombstone,tombstoneRect, Color.Red);
+                    _spriteBatch.Draw(end_texture, End, Color.White);
+                    _spriteBatch.Draw(tombstone,tombstoneRect, Color.White);
                     ResetCoins();
                     break;
             }
