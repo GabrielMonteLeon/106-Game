@@ -44,6 +44,8 @@ namespace MEDU
         /// if player has already completed this level, return true, false otherwise
         /// </summary>
         public bool Completed { get; set; }
+        public int LevelTimer { get; set; }
+        public EndGoal Goal { get; set; }
 
         public const int TILESIZE = 32;
 
@@ -61,6 +63,14 @@ namespace MEDU
             IceLeft, IceMid, IceRight,
         }
 
+        public enum EndGoal
+        {
+            normal,
+            speed,
+            coin,
+            noCoin
+        }
+
         /// <summary>
         /// Creates a new level from specific data. 
         /// </summary>
@@ -71,6 +81,8 @@ namespace MEDU
             this.playerStartPos = playerStartPos;
             this.endTrigger = endTrigger;
             this.deathPlaneY = deathPlaneY;
+            Goal = EndGoal.speed; //temporary for testing
+            LevelTimer = 10;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraOffset, bool debug = false)
