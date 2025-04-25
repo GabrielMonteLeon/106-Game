@@ -12,6 +12,7 @@ namespace MEDU
     {
         Menu,
         LevelSelect,
+        PreLevel,
         Level,
         LevelFailed,
         LevelComplete,
@@ -158,6 +159,13 @@ namespace MEDU
                     }
                     if (select.Contains(ms.Position) && singleLeftClick(ms) && selectedLevel != -1)
                     {
+                        menuState = MenuState.PreLevel;
+                    }
+                    break;
+
+                case (MenuState.PreLevel):
+                    if (singleLeftClick(ms))
+                    {
                         GoToLevel(selectedLevel);
                     }
                     break;
@@ -235,6 +243,10 @@ namespace MEDU
                         _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], color);
                     }
                     _spriteBatch.Draw(start_texture, select, Color.White);
+                    break;
+
+                case (MenuState.PreLevel):
+                    _spriteBatch.DrawString(font, "INSERT JOKE HERE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     break;
 
                 case (MenuState.Level):
