@@ -213,6 +213,9 @@
 #begin level2.level
 /copy:level2.level
 
+#begin level3.level
+/copy:level3.level
+
 #begin LevelSelect.png
 /importer:TextureImporter
 /processor:TextureProcessor
