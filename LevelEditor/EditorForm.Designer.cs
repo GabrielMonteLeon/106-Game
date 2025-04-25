@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             palletteGroup = new GroupBox();
+            pColor9 = new Button();
             pColor8 = new Button();
             pColor7 = new Button();
             pColor6 = new Button();
@@ -67,6 +68,7 @@
             // 
             // palletteGroup
             // 
+            palletteGroup.Controls.Add(pColor9);
             palletteGroup.Controls.Add(pColor8);
             palletteGroup.Controls.Add(pColor7);
             palletteGroup.Controls.Add(pColor6);
@@ -77,10 +79,21 @@
             palletteGroup.Controls.Add(pColor1);
             palletteGroup.Location = new Point(21, 32);
             palletteGroup.Name = "palletteGroup";
-            palletteGroup.Size = new Size(95, 211);
+            palletteGroup.Size = new Size(95, 259);
             palletteGroup.TabIndex = 0;
             palletteGroup.TabStop = false;
             palletteGroup.Text = "Pallette";
+            // 
+            // pColor9
+            // 
+            pColor9.BackColor = Color.FromArgb(128, 255, 255);
+            pColor9.FlatStyle = FlatStyle.Flat;
+            pColor9.Location = new Point(3, 198);
+            pColor9.Name = "pColor9";
+            pColor9.Size = new Size(45, 45);
+            pColor9.TabIndex = 8;
+            pColor9.UseVisualStyleBackColor = false;
+            pColor9.Click += SelectColor;
             // 
             // pColor8
             // 
@@ -91,6 +104,7 @@
             pColor8.Size = new Size(45, 45);
             pColor8.TabIndex = 7;
             pColor8.UseVisualStyleBackColor = false;
+            pColor8.Click += SelectColor;
             // 
             // pColor7
             // 
@@ -405,5 +419,6 @@
         private ToolStripMenuItem toolStripMenuItem8;
         private Button pColor7;
         private Button pColor8;
+        private Button pColor9;
     }
 }
