@@ -108,7 +108,12 @@ namespace MEDU
             levels = new Level[] {
                 Level.LoadLevelFromFile("Content/level1.level"),
                 Level.LoadLevelFromFile("Content/level2.level"),
+                Level.LoadLevelFromFile("Content/level3.level"),
+                Level.LoadLevelFromFile("Content/level1.level"),
+                Level.LoadLevelFromFile("Content/level2.level"),
                 Level.LoadLevelFromFile("Content/level3.level")};
+
+;
             levelSelection = new Rectangle[levels.Length];
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
