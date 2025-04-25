@@ -109,7 +109,12 @@ namespace MEDU
             levels = new Level[] {
                 Level.LoadLevelFromFile("Content/level1.level"),
                 Level.LoadLevelFromFile("Content/level2.level"),
+                Level.LoadLevelFromFile("Content/level3.level"),
+                Level.LoadLevelFromFile("Content/level1.level"),
+                Level.LoadLevelFromFile("Content/level2.level"),
                 Level.LoadLevelFromFile("Content/level3.level")};
+
+;
             levelSelection = new Rectangle[levels.Length];
             levelSelectTextures = new Texture2D[levels.Length];
             for (int i = 0; i < levelSelection.Length; i++)
@@ -383,7 +388,7 @@ namespace MEDU
                     break;
                 case 4:
                     currentLevel.Goal = Level.EndGoal.noCoin;
-                    player.ExtraJumps = 0;
+                    player.ExtraJumps = 1;
                     break;
                 case 5:
                     currentLevel.Goal = Level.EndGoal.coin;
@@ -582,6 +587,9 @@ namespace MEDU
             jokes.Add("Today Feels Basic");
             jokes.Add("Today Feels Light");
             jokes.Add("Today Feels Elemental");
+            jokes.Add("Today Feels Fast");
+            jokes.Add("Today Feels Poor");
+            jokes.Add("Today Feels Rich");
         }
     }
 }
