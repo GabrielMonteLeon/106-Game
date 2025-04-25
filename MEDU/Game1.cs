@@ -104,7 +104,7 @@ namespace MEDU
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             start_texture = Content.Load<Texture2D>("Start");
-            end_texture = Content.Load<Texture2D>("End");
+            end_texture = Content.Load<Texture2D>("goback");
             Level.LoadAssets(Content);
             levels = new Level[] {
                 Level.LoadLevelFromFile("Content/level1.level"),
@@ -133,7 +133,7 @@ namespace MEDU
 
             coinTexture = Content.Load<Texture2D>("coin");
             clockTexture = Content.Load<Texture2D>("Clock");
-            retryButton = Content.Load<Texture2D>("pixel");
+            retryButton = Content.Load<Texture2D>("retry");
 
 
             title = Content.Load<Texture2D>("Title");
