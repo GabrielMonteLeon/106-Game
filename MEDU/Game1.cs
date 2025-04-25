@@ -183,14 +183,16 @@ namespace MEDU
                         currentLevel.Completed = true;
                         menuState = MenuState.LevelComplete;
                     }
-                    else if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
+                    else if (kb.IsKeyDown(Keys.Escape) && prevkb.IsKeyUp(Keys.Escape))
                         menuState = MenuState.Pause;
                     break;
 
                 case (MenuState.Pause):
-                    if (kb.IsKeyDown(Keys.P) && prevkb.IsKeyUp(Keys.P))
-                        menuState = MenuState.Level; 
-                    break;
+                    if (kb.IsKeyDown(Keys.R) && prevkb.IsKeyUp(Keys.R))
+                        menuState = MenuState.Level;
+                    if (kb.IsKeyDown(Keys.Escape) && prevkb.IsKeyUp(Keys.Escape))
+                        menuState = MenuState.Menu;
+                        break;
 
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
@@ -267,7 +269,7 @@ namespace MEDU
                         new Vector2(32, 25),
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
-                        "press 'p' to pause game", 
+                        "press escape to pause game", 
                         new Vector2(10, _graphics.PreferredBackBufferHeight - 20), 
                         Color.White);
                     break;
@@ -275,9 +277,13 @@ namespace MEDU
                 case (MenuState.Pause):
                     _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(_graphics.PreferredBackBufferWidth/2 - 170, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     _spriteBatch.DrawString(descriptionFont,
-                        "press 'p' to resume.",
+                        "press 'r' to resume.",
                         new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 20),
-                        Color.White); 
+                        Color.White);
+                    _spriteBatch.DrawString(descriptionFont,
+                        "press escape to go to menu.",
+                        new Vector2(_graphics.PreferredBackBufferWidth / 2 - 100, _graphics.PreferredBackBufferHeight / 2 + 40),
+                        Color.White);
                     break;
 
                 case (MenuState.LevelComplete):
