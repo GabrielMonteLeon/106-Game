@@ -95,8 +95,8 @@ namespace MEDU
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
             Level.LoadAssets(Content);
-            levels = new Level[] { 
-                Level.LoadLevelFromFile("Content/level1.level"), 
+            levels = new Level[] {
+                Level.LoadLevelFromFile("Content/level1.level"),
                 Level.LoadLevelFromFile("Content/level2.level"),
                 Level.LoadLevelFromFile("Content/level3.level")};
             levelSelection = new Rectangle[levels.Length];
@@ -105,10 +105,10 @@ namespace MEDU
             {
                 levels[i].Completed = false;
                 levelSelection[i] = new Rectangle(
-                    i * _graphics.PreferredBackBufferWidth / levelSelection.Length + 25,
-                    150,
-                    150,
-                    150);
+                    (i%4) * _graphics.PreferredBackBufferWidth / 4 + 30,
+                    (i/4) * 150 + 100,
+                    125,
+                    125);
                 // TODO: replace texture with something that depicts the level
                 levelSelectTextures[i] = Content.Load<Texture2D>($"LS{i+1}");
             }
