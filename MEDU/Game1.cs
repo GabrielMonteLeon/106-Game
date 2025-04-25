@@ -73,7 +73,7 @@ namespace MEDU
             base.Initialize();
 
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
-            End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 - 75,150, 150);
+            End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height/2 + 50,150, 150);
             titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 150, GraphicsDevice.Viewport.Height / 2 - 200, 300, 300);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             backgroundRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -304,7 +304,9 @@ namespace MEDU
                     break;
 
                 case (MenuState.LevelFailed):
-                    _spriteBatch.Draw(end_texture, End, Color.White);
+
+                    _spriteBatch.Draw(background, backgroundRect, Color.Red);
+                    _spriteBatch.Draw(end_texture, End, Color.DarkGray);
                     ResetCoins();
                     break;
             }
