@@ -55,6 +55,7 @@ namespace MEDU
         private Texture2D tombstone;
         private Rectangle tombstoneRect;
         private Texture2D retryButton;
+        private Rectangle retry;
 
         //level select fields
         private Rectangle[] levelSelection;
@@ -80,11 +81,12 @@ namespace MEDU
 
             //rectangles
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
-            End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height/2 + 50,150, 150);
+            End = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 175, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
+            retry = new Rectangle(GraphicsDevice.Viewport.Width / 2 + 25, GraphicsDevice.Viewport.Height / 2 + 50, 150, 150);
             titleRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 150, GraphicsDevice.Viewport.Height / 2 - 200, 300, 300);
             cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             backgroundRect = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            tombstoneRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 -100, 150, 150);
+            tombstoneRect = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 75, GraphicsDevice.Viewport.Height / 2 -150, 150, 150);
 
             menuState = MenuState.Menu;
             player = new Player(new Rectangle(10,10,Level.TILESIZE,Level.TILESIZE*2), Content.Load<Texture2D>("CharacterRight"));
@@ -230,6 +232,10 @@ namespace MEDU
                     {
                         menuState = MenuState.LevelSelect;
                     }
+                    if (retry.Contains(ms.Position) && singleLeftClick(ms))
+                    {
+                        GoToLevel(selectedLevel);
+                    }
                     break;
             }
             prevMsState = ms;
@@ -326,7 +332,14 @@ namespace MEDU
                 case (MenuState.LevelFailed):
 
                     _spriteBatch.Draw(background, backgroundRect, Color.Red);
-                    _spriteBatch.Draw(end_texture, End, Color.White);
+                    _spriteBatch.Draw(
+                        end_texture, 
+                        End, 
+                        Color.White);
+                    _spriteBatch.Draw(
+                        retryButton,
+                        retry,
+                        Color.White);
                     _spriteBatch.Draw(tombstone,tombstoneRect, Color.White);
                     ResetCoins();
                     break;
