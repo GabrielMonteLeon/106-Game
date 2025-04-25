@@ -34,6 +34,7 @@ namespace MEDU
         private KeyboardState prevkb;
         private int coinCount;
         private Texture2D coinTexture;
+        private Texture2D clockTexture;
 
 
         //menu fields
@@ -111,7 +112,8 @@ namespace MEDU
             }
 
             coinTexture = Content.Load<Texture2D>("coin");
-            
+            clockTexture = Content.Load<Texture2D>("Clock");
+
 
             title = Content.Load<Texture2D>("Title");
             background = Content.Load<Texture2D>("background");
@@ -238,6 +240,7 @@ namespace MEDU
                     _spriteBatch.Draw(background, backgroundRect, Color.White);
                     currentLevel.Draw(_spriteBatch, cameraPosition);
                     // timer
+                    _spriteBatch.Draw(clockTexture, new Rectangle(10, 25, 20, 20), Color.White);
                     String time = String.Format("{0:0.00}", timer);
                     player.draw(_spriteBatch, cameraPosition);
                     // coin count
@@ -248,7 +251,7 @@ namespace MEDU
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
                         time,
-                        new Vector2(10, 25),
+                        new Vector2(32, 25),
                         Color.Yellow);
                     _spriteBatch.DrawString(byteBounce,
                         "press 'p' to pause game", 
