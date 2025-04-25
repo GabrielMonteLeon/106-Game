@@ -81,7 +81,7 @@ namespace MEDU
             this.playerStartPos = playerStartPos;
             this.endTrigger = endTrigger;
             this.deathPlaneY = deathPlaneY;
-            Goal = EndGoal.speed; //temporary for testing
+            Goal = EndGoal.normal; //temporary for testing
             LevelTimer = 10;
         }
 

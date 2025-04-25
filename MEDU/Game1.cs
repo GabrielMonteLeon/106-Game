@@ -184,8 +184,11 @@ namespace MEDU
                         menuState = MenuState.LevelFailed;
                     else if (player.Transform.Intersects(currentLevel.EndTrigger))
                     {
-                        currentLevel.Completed = true;
-                        menuState = MenuState.LevelComplete;
+                        if (currentLevel.Goal != Level.EndGoal.coin || coinCount >= currentLevel.Coins.Count)
+                        {
+                            currentLevel.Completed = true;
+                            menuState = MenuState.LevelComplete;
+                        }
                     }
                     else if (kb.IsKeyDown(Keys.Escape) && prevkb.IsKeyUp(Keys.Escape))
                         menuState = MenuState.Pause;
