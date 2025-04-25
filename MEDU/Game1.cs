@@ -54,6 +54,7 @@ namespace MEDU
         //end screen
         private Texture2D tombstone;
         private Rectangle tombstoneRect;
+        private Texture2D retryButton;
 
         //level select fields
         private Rectangle[] levelSelection;
@@ -65,8 +66,6 @@ namespace MEDU
         private SpriteFont font;
         private SpriteFont descriptionFont;
         private SpriteFont byteBounce;
-
-        
 
         public Game1()
         {
@@ -127,6 +126,7 @@ namespace MEDU
 
             coinTexture = Content.Load<Texture2D>("coin");
             clockTexture = Content.Load<Texture2D>("Clock");
+            retryButton = Content.Load<Texture2D>("pixel");
 
 
             title = Content.Load<Texture2D>("Title");
@@ -138,9 +138,6 @@ namespace MEDU
 
             font = Content.Load<SpriteFont>("spritefont");
             descriptionFont = Content.Load<SpriteFont>("ByteBounce");
-
-            
-
 
 
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
@@ -220,15 +217,18 @@ namespace MEDU
                 case (MenuState.LevelComplete):
                     if (singleLeftClick(ms))
                     {
+                        if (selectedLevel < levels.Length - 1)
+                        {
+                            selectedLevel++;
+                        }
                         menuState = MenuState.LevelSelect;
-                        selectedLevel = -1;
                     }
                     break;
 
                 case (MenuState.LevelFailed):
                     if (End.Contains(ms.Position) && singleLeftClick(ms))
                     {
-                        GoToLevel(levelNum);
+                        menuState = MenuState.LevelSelect;
                     }
                     break;
             }
@@ -321,7 +321,6 @@ namespace MEDU
                         "click to continue",
                         new Vector2(_graphics.PreferredBackBufferWidth/2 - 90, _graphics.PreferredBackBufferHeight/2 + 20),
                         Color.White);
-                    selectedLevel = -1;
                     break;
 
                 case (MenuState.LevelFailed):
