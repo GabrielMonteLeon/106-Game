@@ -334,11 +334,29 @@ namespace MEDU
             switch(level)
             {
                 case 0:
-                case 2:
                     player.ExtraJumps = 0;
+                    currentLevel.Goal = Level.EndGoal.normal;
                     break;
                 case 1:
                     player.ExtraJumps = 1;
+                    currentLevel.Goal = Level.EndGoal.normal;
+                    break;
+                case 2:
+                    player.ExtraJumps = 0;
+                    currentLevel.Goal = Level.EndGoal.normal;
+                    break;
+                case 3:
+                    currentLevel.Goal = Level.EndGoal.speed;
+                    currentLevel.LevelTimer = 15;
+                    player.ExtraJumps = 0;
+                    break;
+                case 4:
+                    currentLevel.Goal = Level.EndGoal.noCoin;
+                    player.ExtraJumps = 0;
+                    break;
+                case 5:
+                    currentLevel.Goal = Level.EndGoal.coin;
+                    player.ExtraJumps = 0;
                     break;
             }
         }
