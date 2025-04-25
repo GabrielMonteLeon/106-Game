@@ -376,7 +376,7 @@ namespace MEDU
                     break;
                 case 4:
                     currentLevel.Goal = Level.EndGoal.noCoin;
-                    player.ExtraJumps = 0;
+                    player.ExtraJumps = 1;
                     break;
                 case 5:
                     currentLevel.Goal = Level.EndGoal.coin;
@@ -575,6 +575,9 @@ namespace MEDU
             jokes.Add("Today Feels Basic");
             jokes.Add("Today Feels Light");
             jokes.Add("Today Feels Elemental");
+            jokes.Add("Today Feels Fast");
+            jokes.Add("Today Feels Poor");
+            jokes.Add("Today Feels Rich");
         }
     }
 }
