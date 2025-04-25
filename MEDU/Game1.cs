@@ -110,7 +110,7 @@ namespace MEDU
                 Level.LoadLevelFromFile("Content/level2.level"),
                 Level.LoadLevelFromFile("Content/level3.level"),
                 Level.LoadLevelFromFile("Content/level1.level"),
-                Level.LoadLevelFromFile("Content/level2.level"),
+                Level.LoadLevelFromFile("Content/level2C.level"),
                 Level.LoadLevelFromFile("Content/level3.level")};
 
 ;
