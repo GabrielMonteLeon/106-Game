@@ -12,36 +12,51 @@ namespace MEDU
     internal abstract class GameObject
     {
         //fields
-        private Rectangle position;
-        private Texture2D texture;
-        public Rectangle Position
+        private Rectangle transform;
+        private Sprite sprite;
+        public Rectangle Transform
         {
             get
             {
-                return position;
+                return transform;
             }
             set
             {
-                position = value;
+                transform = value;
             }
         }
 
-        public Texture2D Texture => texture;
-
-        public GameObject(Rectangle position, Texture2D texture)
+        public Point Position
         {
-            this.position = position;
-            this.texture = texture;
+            get
+            {
+                return transform.Location;
+            }
+            set
+            {
+                transform.Location = value;
+            }
         }
 
-        public virtual void update()
+        public Texture2D Texture => sprite.texture;
+        public Sprite Sprite => sprite;
+
+        public GameObject(Rectangle position, Sprite sprite)
+        {
+            this.transform = position;
+            this.sprite = sprite;
+        }
+
+        public virtual void update(GameTime gameTime)
         {
             //default gameobject update is empty for now
         }
 
         public virtual void draw(SpriteBatch spriteBatch, Vector2 camPosition)
         {
-            spriteBatch.Draw(texture, new Vector2(position.X-camPosition.X, position.Y-camPosition.Y), position, Color.White);
+            Rectangle screenSpacePos = Transform;
+            screenSpacePos.Offset(-camPosition);
+            spriteBatch.Draw(Sprite.texture, screenSpacePos, Sprite.sourceRect, Color.White);
         }
     }
 }

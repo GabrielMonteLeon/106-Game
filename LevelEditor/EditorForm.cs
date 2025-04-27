@@ -47,7 +47,8 @@
         /// </summary>
         private LinkedListNode<ActionData>? savePos;
 
-        private bool IsSaved => undoPos == savePos && currentAction == null;
+        private bool IsSaved => undoPos == savePos && currentAction == null && !wasResized;
+        private bool wasResized;
 
         public EditorForm()
         {
@@ -66,42 +67,20 @@
             undoQueue = new LinkedList<ActionData>();
             undoPos = null;
             savePos = null;
-        }
+            wasResized = false;
 
-        /// <summary>
-        /// Initializes a new blank map.
-        /// </summary>
-        public void InitNewMap(int width, int height)
-        {
-            if (tileMapData != null)
-            {
-                Cleanup();
-            }
-
-            tileMapData = new int[width, height];
-            tileMapVisuals = new PictureBox[width, height];
-            SelectColor(0);
-            currentFile = "";
-            undoQueue = new LinkedList<ActionData>();
-            undoPos = null;
-            savePos = null;
-
-            //calculate tile/map sizes
+            //Create tile visuals
             tileSize = 32;
-            int mapHeight = tileSize * height;
-            int mapWidth = tileSize * width;
-            //adjust scroll bars based on map size
-            AdjustScrollBars();
+            int visibleTilesX = mapPanel.Width / tileSize;
+            int visibleTilesY = mapPanel.Height / tileSize;
+            tileMapVisuals = new PictureBox[visibleTilesX, visibleTilesY];
 
-            //Create map picture boxes;
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < visibleTilesX; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < visibleTilesY; y++)
                 {
                     PictureBox tile = new PictureBox();
                     tileMapVisuals[x, y] = tile;
-                    //the first color is the default color
-                    tile.BackColor = colorPalette[0];
                     tile.Location = new Point(tileSize * x, tileSize * y);
                     tile.Size = new Size(tileSize, tileSize);
                     int currentX = x;
@@ -114,6 +93,38 @@
                     mapPanel.Controls.Add(tile);
                 }
             }
+        }
+
+        /// <summary>
+        /// Initializes a new blank map.
+        /// </summary>
+        public void InitNewMap(int width, int height, bool fullClear = true)
+        {
+            if (tileMapData != null)
+            {
+                Cleanup();
+            }
+
+            tileMapData = new int[width, height];
+            if(fullClear)
+            {
+                for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+                {
+                    for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                    {
+                        //the first color is the default color
+                        tileMapVisuals[x, y].BackColor = colorPalette[0];
+                    }
+                }
+            }
+            SelectColor(0);
+            currentFile = "";
+            undoQueue = new LinkedList<ActionData>();
+            undoPos = null;
+            savePos = null;
+
+            //adjust scroll bars based on map size
+            AdjustScrollBars();
 
             UpdateTitle();
             UpdateButtons();
@@ -164,13 +175,16 @@
                 if (reader != null)
                     reader.Close();
             }
-            InitNewMap(width, height);
+            InitNewMap(width, height, false);
             currentFile = filePath;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    PaintTile(x, y, data[x * height + y], false);
+                    byte tileID = data[x * height + y];
+                    if (tileID > 5) //5-8 are all solid block variations
+                        tileID = 5;
+                    PaintTile(x, y, tileID, false);
                 }
             }
             UpdateTitle();
@@ -196,7 +210,6 @@
         /// </summary>
         private void Cleanup()
         {
-            mapBox.Controls.Clear();
             //this signals that everything is cleaned up
             tileMapData = null!;
 
@@ -272,9 +285,44 @@
                 writer.Write((byte)tileMapData.GetLength(1));
                 for (int x = 0; x < tileMapData.GetLength(0); x++)
                 {
+                    byte previousTile = 0;
                     for (int y = 0; y < tileMapData.GetLength(1); y++)
                     {
-                        writer.Write((byte)tileMapData[x, y]);
+                        byte tileID = (byte)tileMapData[x, y];
+                        if(tileID == 5) //solid block
+                        {
+                            bool top = (y == 0 || tileMapData[x, y - 1] != 5);
+                            bool bottom = (y == tileMapData.GetLength(1) || tileMapData[x, y + 1] != 5);
+
+                            //single row
+                            if(top && bottom)
+                            {
+                                tileID = 5;
+                            }
+                            //top row
+                            else if(top)
+                            {
+                                tileID = 6;
+                            }
+                            //bottom row
+                            else if(bottom)
+                            {
+                                tileID = 7;
+                            }
+                            //middle row
+                            else
+                            {
+                                tileID = 8;
+                            }
+                            //if previous tile was a solid block of a different type...
+                            if (previousTile >= 5 && previousTile <= 8 && previousTile != tileID)
+                            {
+                                //special solid block (indicates left/right boundary tiles shouldn't be placed at this change)
+                                tileID = 9;
+                            }
+                        }
+                        writer.Write(tileID);
+                        previousTile = tileID;
                     }
                 }
             }
@@ -291,24 +339,31 @@
 
             currentFile = filePath;
             savePos = undoPos;
+            wasResized = false;
             UpdateTitle();
             MessageBox.Show("Saved Successfully");
             return true;
         }
 
-        private void OnTileClick(PictureBox sender, int x, int y)
+        private void OnTileClick(PictureBox sender, int visualX, int visualY)
         {
             //make sure the most recent paint action was recorded
             RecordCurrentAction(null!, null!);
 
             sender.Capture = false;
-            PaintTile(x, y);
+            int trueX = visualX + scrollX;
+            int trueY = visualY + scrollY;
+            PaintTile(trueX, trueY);
         }
 
-        private void OnTileMouseEnter(int x, int y)
+        private void OnTileMouseEnter(int visualX, int visualY)
         {
             if (MouseButtons != 0)
-                PaintTile(x, y);
+            {
+                int trueX = visualX + scrollX;
+                int trueY = visualY + scrollY;
+                PaintTile(trueX, trueY);
+            }
             else
                 //make sure the most recent paint action was recorded if the mouse was up
                 RecordCurrentAction(null!, null!);
@@ -333,7 +388,7 @@
 
         private void SelectColor(int colorIndex)
         {
-            for(int i = 0; i < paletteButtons.Length; i++)
+            for (int i = 0; i < paletteButtons.Length; i++)
             {
                 if (i != colorIndex)
                     paletteButtons[i].FlatStyle = FlatStyle.Flat;
@@ -356,7 +411,7 @@
                 colorIndex = selectedColorIndex;
 
             int prevColorIndex = tileMapData[x, y];
-            if (prevColorIndex == colorIndex)
+            if (prevColorIndex == colorIndex && asAction)
                 return;
 
             if (asAction)
@@ -371,7 +426,12 @@
             }
 
             tileMapData[x, y] = colorIndex;
-            tileMapVisuals[x, y].BackColor = colorPalette[colorIndex];
+
+            int visualX = x - scrollX;
+            int visualY = y - scrollY;
+            if (visualX < 0 || visualX >= tileMapVisuals.GetLength(0) || visualY < 0 || visualY >= tileMapVisuals.GetLength(1))
+                return;
+            tileMapVisuals[visualX, visualY].BackColor = colorPalette[colorIndex];
         }
 
         /// <summary>
@@ -488,11 +548,11 @@
 
         private void UpdateScroll()
         {
-            for(int x = 0; x < tileMapVisuals.GetLength(0); x++)
+            for (int x = 0; x < tileMapVisuals.GetLength(0); x++)
             {
-                for(int y = 0; y < tileMapVisuals.GetLength(1); y++)
+                for (int y = 0; y < tileMapVisuals.GetLength(1); y++)
                 {
-                    tileMapVisuals[x, y].Location = new Point((x - scrollX) * tileSize, (y - scrollY) * tileSize);
+                    tileMapVisuals[x, y].BackColor = colorPalette[tileMapData[x+scrollX, y+scrollY]];
                 }
             }
         }
@@ -505,8 +565,8 @@
             //Set scroll bar sizes
             scrollBarHorizontal.LargeChange = visibleTilesX;
             scrollBarVertical.LargeChange = visibleTilesY;
-            scrollBarHorizontal.Maximum = tileMapData.GetLength(0);
-            scrollBarVertical.Maximum = tileMapData.GetLength(1);
+            scrollBarHorizontal.Maximum = tileMapData.GetLength(0) - 1;
+            scrollBarVertical.Maximum = tileMapData.GetLength(1) - 1;
             //Enable/Disable scroll bars
             scrollBarHorizontal.Enabled = scrollBarHorizontal.LargeChange < scrollBarHorizontal.Maximum;
             scrollBarVertical.Enabled = scrollBarVertical.LargeChange < scrollBarVertical.Maximum;
@@ -544,6 +604,55 @@
             System.Diagnostics.Debug.WriteLine($"Vertical scroll to {e.NewValue}.");
             scrollY = e.NewValue;
             UpdateScroll();
+        }
+
+        private void resizeGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResizeForm resize = new ResizeForm(tileMapData.GetLength(0), tileMapData.GetLength(1));
+            resize.ShowDialog();
+            if (resize.Result != DialogResult.OK)
+                return;
+            int newWidth = resize.FinalWidth;
+            int newHeight = resize.FinalHeight;
+            if(newWidth <= 0 || newHeight <= 0)
+            {
+                MessageBox.Show("Width and Height must be greater than 0.", "Invalid Resize", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int[,] newData = new int[newWidth, newHeight];
+
+            //record where the previous boundaries would end up in the new canvas.
+            //If they'd be off the new canvas, instead treat them as being on the edge of the new canvas.
+            int oldLeft = Math.Max(0, resize.LeftChange);
+            int oldRight = newWidth - Math.Max(0, resize.RightChange);
+            int oldTop = Math.Max(0, resize.TopChange);
+            int oldBottom = newHeight - Math.Max(0, resize.BottomChange);
+
+            for(int newX = oldLeft; newX < oldRight; newX++)
+            {
+                int oldX = newX - resize.LeftChange;
+                for(int newY = oldTop; newY < oldBottom; newY++)
+                {
+                    int oldY = newY - resize.TopChange;
+                    newData[newX, newY] = tileMapData[oldX, oldY];
+                }
+            }
+
+            tileMapData = newData;
+            AdjustScrollBars();
+            UpdateScroll();
+            //resizing canvas can't be undone (because I'm too lazy to update the undo function)
+            undoQueue = new LinkedList<ActionData>();
+            undoPos = null;
+            wasResized = true;
+            UpdateTitle();
+            UpdateButtons();
+        }
+
+        private void AdjustZoom(object sender, EventArgs e)
+        {
+            MessageBox.Show("Zoom not yet implemented.");
         }
     }
 }

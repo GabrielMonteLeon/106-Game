@@ -24,7 +24,7 @@ namespace MEDU
         public static void LoadLevel(string filePath)
         {
             loadedLevel = Level.LoadLevelFromFile(filePath);
-            cameraPos = loadedLevel.PlayerStartPos;
+            cameraPos = loadedLevel.PlayerStartPos.ToVector2();
         }
 
         public static void Update(GameTime gameTime)
@@ -32,6 +32,8 @@ namespace MEDU
             KeyboardState kb = Keyboard.GetState();
             if (kb.IsKeyDown(Keys.D1) && prevKBState.IsKeyUp(Keys.D1))
                 LoadLevel("Content/test level.level");
+            if (kb.IsKeyDown(Keys.D2) && prevKBState.IsKeyUp(Keys.D2))
+                LoadLevel("Content/Main Level.level");
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -54,7 +56,9 @@ namespace MEDU
         {
             if (loadedLevel == null)
                 return;
+            spriteBatch.Begin();
             loadedLevel.Draw(spriteBatch, cameraPos, true);
+            spriteBatch.End();
         }
     }
 }

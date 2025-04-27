@@ -10,6 +10,7 @@ namespace MEDU
     enum MenuState
     {
         Menu,
+        LevelSelect,
         Level,
         LevelFailed,
         LevelComplete,
@@ -22,10 +23,14 @@ namespace MEDU
         private SpriteBatch _spriteBatch;
         
         private double timer;
-        private int level;
+        private int levelNum;
         private Level currentLevel;
+        private Level[] levels;
         private Player player;
         private MenuState menuState;
+        private Point cameraCenterOffset;
+        private MouseState prevMsState;
+
 
         //menu fields
         private Rectangle Start;
@@ -35,6 +40,13 @@ namespace MEDU
         private Texture2D end_texture;
         private MouseState pms;
 
+        //level select fields
+        private Rectangle[] levelSelection;
+        private Texture2D[] levelSelectTextures;
+        private Rectangle select;
+
+        // level complete
+        private SpriteFont font;
 
         public Game1()
         {
@@ -45,13 +57,17 @@ namespace MEDU
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
             Start = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 50, GraphicsDevice.Viewport.Height / 2 - 50, 100, 100);
-            End = new Rectangle(Start.X,Start.Y, 100, 100); 
+            End = new Rectangle(Start.X,Start.Y, 100, 100);
+            cameraCenterOffset = new Point(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
             menuState = MenuState.Menu;
-            player = new Player(new Rectangle(10,10,100,100), Content.Load<Texture2D>("CLEFT"));
+            player = new Player(new Rectangle(10,10,Level.TILESIZE,Level.TILESIZE*2), Content.Load<Texture2D>("CharacterRight"));
+            select = new Rectangle(
+                _graphics.PreferredBackBufferWidth / 2 - 35,
+                _graphics.PreferredBackBufferHeight - 75,
+                70,
+                70);
         }
 
         protected override void LoadContent()
@@ -59,10 +75,22 @@ namespace MEDU
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             start_texture = Content.Load<Texture2D>("Start");
             end_texture = Content.Load<Texture2D>("End");
-
-
-            // TODO: use this.Content to load your game content here
             Level.LoadAssets(Content);
+            levels = new Level[] { Level.LoadLevelFromFile("Content/Main Level.level") };
+            levelSelection = new Rectangle[levels.Length];
+            levelSelectTextures = new Texture2D[levels.Length];
+            for (int i = 0; i < levelSelection.Length; i++)
+            {
+                levels[i].Completed = false;
+                levelSelection[i] = new Rectangle(
+                    i * _graphics.PreferredBackBufferWidth / levelSelection.Length + 25,
+                    70,
+                    _graphics.PreferredBackBufferWidth / levelSelection.Length - 50,
+                    _graphics.PreferredBackBufferHeight - 150);
+                // TODO: replace texture with something that depicts the level
+                levelSelectTextures[i] = Content.Load<Texture2D>("pixel");
+            }
+            font = Content.Load<SpriteFont>("spritefont");
             //System.Diagnostics.Debug.WriteLine(Level.LoadLevelFromFile("Content/test level.level").GetData());
         }
 
@@ -70,41 +98,79 @@ namespace MEDU
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            //mouse position + rectangle
-            MouseState ms = Mouse.GetState();
-            Rectangle msr = new Rectangle(ms.X,ms.Y,1,1);   
 
-            //Basic finite for going through basic game
+            //LevelTest.Update(gameTime);
+            //return;
+
+            //mouse position
+            MouseState ms = Mouse.GetState();
+
+            //Basic finite state machine for going through basic game
             switch (menuState)
             {
                 case (MenuState.Menu):
-                    if (msr.Intersects(Start) && ms.LeftButton == ButtonState.Pressed)
+                    if (Start.Contains(ms.Position) && singleLeftClick(ms))
                     {
+                        menuState = MenuState.LevelSelect;
+                    }
+                    break;
+                case (MenuState.LevelSelect):
+                    int selectedLevel = 0;
+                    for (int i = 0; i < levelSelection.Length; i++)
+                    {
+                        if (levelSelection[i].Contains(ms.Position) && singleLeftClick(ms))
+                        {
+                            selectedLevel = i;
+                        }
+                    }
+                    if (select.Contains(ms.Position) && singleLeftClick(ms))
+                    {
+                        GoToLevel(selectedLevel);
                         menuState = MenuState.Level;
                     }
                     break;
                 case (MenuState.Level):
-                    PlayerOutofBounds(player);
-                    cameraPosition = new Vector2(player.Position.X, player.Position.Y);
-                    if (!player.isAlive)
-                    {
+                    player.update(gameTime);
+                    HandleCollision();
+                    CheckIfPlayerOutofBounds(player);
+                    cameraPosition = (player.Transform.Center - cameraCenterOffset).ToVector2();
+                    if (!player.IsAlive)
                         menuState = MenuState.LevelFailed;
+                    if (player.Transform.Intersects(currentLevel.EndTrigger))
+                    {
+                        currentLevel.Completed = true;
+                        menuState = MenuState.LevelComplete;
                     }
+                    if (Keyboard.GetState().IsKeyDown(Keys.P))
+                        menuState = MenuState.Pause;
                     break;
-                case (MenuState.LevelFailed):
-                    if (msr.Intersects(End) && ms.LeftButton == ButtonState.Pressed)
+                case (MenuState.Pause):
+                    if (Keyboard.GetState().IsKeyDown(Keys.R))
+                        menuState = MenuState.Level; 
+                    break;
+                case (MenuState.LevelComplete):
+                    if (singleLeftClick(ms))
                     {
                         menuState = MenuState.Menu;
                     }
                     break;
+                case (MenuState.LevelFailed):
+                    if (End.Contains(ms.Position) && singleLeftClick(ms))
+                    {
+                        menuState = MenuState.LevelSelect;
+                    }
+                    break;
             }
-            player.update();
+            prevMsState = ms;
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            //LevelTest.Draw(_spriteBatch);
+            //return;
 
             _spriteBatch.Begin();
             //temporary menu demo draws
@@ -113,8 +179,26 @@ namespace MEDU
                 case (MenuState.Menu):
                     _spriteBatch.Draw(start_texture,Start, Color.White);
                     break;
+                case (MenuState.LevelSelect):
+                    _spriteBatch.DrawString(font, "LEVEL SELECTION", new Vector2(200, 10), Color.White);
+                    for (int i = 0; i < levelSelection.Length; i++)
+                    {
+                        Color color = Color.White;
+                        if (levels[i].Completed)
+                            color = Color.Gray;
+                        _spriteBatch.Draw(levelSelectTextures[i], levelSelection[i], color);
+                    }
+                    _spriteBatch.Draw(start_texture, select, Color.White);
+                    break;
                 case (MenuState.Level):
-                    player.draw(_spriteBatch, new Vector2(0,0));
+                    currentLevel.Draw(_spriteBatch, cameraPosition);
+                    player.draw(_spriteBatch, cameraPosition);
+                    break;
+                case (MenuState.Pause):
+                    _spriteBatch.DrawString(font, "GAME PAUSED", new Vector2(230, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
+                    break;
+                case (MenuState.LevelComplete):
+                    _spriteBatch.DrawString(font, "LEVEL COMPLETE", new Vector2(200, _graphics.PreferredBackBufferHeight / 2 - 50), Color.White);
                     break;
                 case (MenuState.LevelFailed):
                     _spriteBatch.Draw(end_texture, End, Color.White);
@@ -131,7 +215,9 @@ namespace MEDU
 
         public void GoToLevel(int level)
         {
-
+            currentLevel = levels[level];
+            levelNum = level;
+            player.Reset(currentLevel.PlayerStartPos);
         }
 
         public void GoToMenu()
@@ -142,75 +228,191 @@ namespace MEDU
         /// <summary>
         /// Makes character dead if they run out of bounds
         /// </summary>
-        /// <param name="player"></param>
-        private void PlayerOutofBounds(Player player)
+        private void CheckIfPlayerOutofBounds(Player player)
         {
-            Rectangle position = player.Position;
-            if((position.X + position.Width) < 0)
+            Rectangle position = player.Transform;
+            if(position.Y > currentLevel.DeathPlaneY)
             {
-                player.isAlive = false;
-            }
-            if((position.Y > GraphicsDevice.Viewport.Height))
-            {
-                player.isAlive = false;
+                player.IsAlive = false;
             }
         }
 
         public void HandleCollision()
         {
             List<Platform> objects = currentLevel.Platforms;
+            Rectangle playerRect = player.Transform;
+            //if we don't detect ground collision, IsOnGround will default to false
+            player.IsOnGround = false;
+            player.IsOnLeftWall = false;
+            player.IsOnRightWall = false;
+            List<Platform> intersections = new List<Platform>();
             foreach (Platform platform in objects)
             {
-                if (player.Position.Intersects(platform.Position))
+
+                if (!platform.PassThrough)
                 {
-                    if (!platform.IsSafe)
+                    //write code here to figure out if the player is close enough to either wall to wall jump (uses IsPlayerOnLeftWall/IsPlayerOnRightWall)
+                }
+                //Ignore platforms not being collided with
+                if (!playerRect.Intersects(platform.Transform))
+                    continue;
+
+                //If the platform is deadly, kill the player. Any further collisions are irrelevant.
+                if (!platform.IsSafe)
+                {
+                    //implement code for player dying
+                    player.IsAlive = false;
+                    return;
+                }
+
+                //Record the intersection to process it later.
+                intersections.Add(platform);
+            }
+
+            //resolve horizontally first
+            for(int i = intersections.Count - 1; i >= 0; i--)
+            {
+                Platform platform = intersections[i];
+                //pass-through platforms have no horizontal collision
+                if (platform.PassThrough)
+                {
+                    continue;
+                }
+                else
+                {
+                    Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+
+                    //if there's no overlap there's no more intersection!
+                    //(this would be pretty common for horizontal collisions since each row of tiles have their own collision box)
+                    if (overlap.Width == 0)
                     {
-                        //implement code for player dying
-                        player.isAlive = false;
+                        intersections.RemoveAt(i);
+                        continue;
                     }
-
-
-                    //move player and camera based on collision here
-                    Rectangle playerRect = player.Position;
-                    Rectangle overlap = Rectangle.Intersect(platform.Position, playerRect);
 
                     //Resolve horizontally only if the overlap's width is less than its height
                     //if the overlap is a square, prioritize horizontal resolution
-                    if (overlap.Width > overlap.Height || overlap.Width == 0)
-                        continue;
-
-                    //if to the left of the obstacle, move left. otherwise, move right
-                    if (playerRect.X < platform.Position.X)
-                        playerRect.X -= overlap.Width;
-                    else
-                        playerRect.X += overlap.Width;
-
-                    player.Position = playerRect;
-                    //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
-                    if (player.Position.Intersects(platform.Position))
+                    if (overlap.Width > overlap.Height)
                     {
-                        if (overlap.Height == 0)
-                            continue;
-
-                        //if above the obstacle, move up. otherwise, move down
-                        if (playerRect.Y < platform.Position.Y)
-                        {
-                            if (platform.PassThrough)
-                                playerRect.Y += overlap.Height;
-                            else
-                                playerRect.Y -= overlap.Height;
-                        }
-                        else
-                            playerRect.Y += overlap.Height;
-
-
-                        player.JumpVelocity = 0;
-                        player.Position = playerRect;
+                        continue;
                     }
 
-
+                    //if to the left of the obstacle, move left. otherwise, move right
+                    if (playerRect.X < platform.Transform.X)
+                    {
+                        playerRect.X -= overlap.Width;
+                    }
+                    else
+                    {
+                        playerRect.X += overlap.Width;
+                    }
+                    intersections.RemoveAt(i);
                 }
             }
+
+            //resolve vertically
+            for (int i = intersections.Count - 1; i >= 0; i--)
+            {
+                Platform platform = intersections[i];
+                Rectangle overlap = Rectangle.Intersect(platform.Transform, playerRect);
+
+                if (overlap.Height == 0)
+                    continue;
+
+                if (platform.PassThrough)
+                {
+                    //ignore pass-through collision when moving up
+                    if (player.PlayerVelocity.Y < 0)
+                        continue;
+                    //collide if the player is almost above the platform
+                    if (overlap.Bottom < platform.Transform.Center.Y)
+                    {
+                        //keep the player slightly inside the platform so future collision checks work correctly
+                        playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
+                        player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                        player.IsOnGround = true;
+                    }
+                }
+
+                else
+                {
+                    //if above the obstacle, move up. otherwise, move down
+                    if (playerRect.Y < platform.Transform.Y)
+                    {
+                        //keep the player slightly inside the platform so future collision checks work correctly
+                        playerRect.Y = platform.Transform.Top - playerRect.Height + 1;
+
+                        //only hit the floor if moving down (or staying still)
+                        if (player.PlayerVelocity.Y >= 0)
+                        {
+                            player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                            player.IsOnGround = true;
+                        }
+                    }
+                    else
+                    {
+                        playerRect.Y += overlap.Height;
+
+                        //only hit the ceiling if moving up (or staying still)
+                        if(player.PlayerVelocity.Y <= 0)
+                            player.PlayerVelocity = new Vector2(player.PlayerVelocity.X, 0);
+                    }
+                }
+            }
+
+            player.Transform = playerRect;
+        }
+
+        //private void ResolveCollisions()
+        //{
+        //    Rectangle playerRect = GetPlayerRect();
+        //    //find all intersections
+        //    List<Rectangle> intersections = new List<Rectangle>();
+        //    foreach (Rectangle obstacle in obstacleRects)
+        //    {
+        //        if (playerRect.Intersects(obstacle))
+        //            intersections.Add(obstacle);
+        //    }
+
+            ////resolve horizontally
+            //foreach (Rectangle intersection in intersections)
+            //{
+            //    Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+            //    //Resolve horizontally only if the overlap's width is less than its height
+            //    //if the overlap is a square, prioritize horizontal resolution
+            //    if (overlap.Width > overlap.Height || overlap.Width == 0)
+            //        continue;
+
+            //    //if to the left of the obstacle, move left. otherwise, move right
+            //    if (playerRect.X<intersection.X)
+            //        playerRect.X -= overlap.Width;
+            //    else
+            //        playerRect.X += overlap.Width;
+            //}
+
+            //resolve vertically
+            //foreach (Rectangle intersection in intersections)
+            //{
+            //    Rectangle overlap = Rectangle.Intersect(intersection, playerRect);
+
+            //    //at this point, all horizontal collisions should be resolved, so there's no need for a width/height check
+            //    if (overlap.Height == 0)
+            //        continue;
+
+            //    //if above the obstacle, move up. otherwise, move down
+            //    if (playerRect.Y<intersection.Y)
+            //        playerRect.Y -= overlap.Height;
+            //    else
+            //        playerRect.Y += overlap.Height;
+            //    playerVelocity.Y = 0;
+            //}
+        //    playerPosition = playerRect.Location.ToVector2();
+        //}
+
+        public bool singleLeftClick(MouseState ms)
+        {
+            return ms.LeftButton == ButtonState.Pressed && prevMsState.LeftButton != ButtonState.Pressed;
         }
     }
 }
