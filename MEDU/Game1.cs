@@ -121,8 +121,8 @@ namespace MEDU
             {
                 levels[i].Completed = false;
                 levelSelection[i] = new Rectangle(
-                    (i%4) * _graphics.PreferredBackBufferWidth / 4 + 30,
-                    (i/4) * 150 + 100,
+                    (i%3) * _graphics.PreferredBackBufferWidth / 4 + 125,
+                    (i/3) * 150 + 100,
                     125,
                     125);
                 // TODO: replace texture with something that depicts the level
